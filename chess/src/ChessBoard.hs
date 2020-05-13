@@ -35,7 +35,6 @@ colSep = "|"
 printRow :: RowLoc -> Board -> String
 printRow rowIndex board = (show ((+) 1 rowIndex)) ++ " |" ++
     (concat . intersperse colSep $ printMaybePiece <$> board !! rowIndex) ++ "|\n"
---    (foldl (\colIdx row -> (printMaybePiece (board !! rowIndex !! colIdx))) ++ (board !! rowIndex))
 
 printBoard :: Board -> String
 printBoard board = "   A  B  C  D  E  F  G  H  \n" ++ rowSep
@@ -102,8 +101,6 @@ emptyRow = (take 8 (repeat Nothing))
 startBoard :: Board
 startBoard = [(Just <$> (colorPiece White) <$> baseRow), (Just <$> (colorPiece White) <$> pawnRow),
     emptyRow, emptyRow, emptyRow, emptyRow, (Just <$> (colorPiece Black) <$> pawnRow), (Just <$> (colorPiece Black) <$> baseRow)]
---startBoard = (fmap (colorPiece White) baseRow) ++ (fmap (colorPiece White) pawnRow) ++
---    (take 4 (repeat emptyRow)) ++ (fmap (colorPiece Black) baseRow) ++ (fmap (colorPiece Black) pawnRow)
 
 whitePlayer = Player { name = "Player 1"
     , color = White

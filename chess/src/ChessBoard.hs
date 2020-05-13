@@ -7,6 +7,11 @@ module ChessBoard
     , Color
     , pieceValue
     , Game
+    , printBoard
+    , startBoard
+    , whitePlayer
+    , blackPlayer
+    , game
     ) where
 
 import Data.List
@@ -29,13 +34,12 @@ colSep = "|"
 
 printRow :: RowLoc -> Board -> String
 printRow rowIndex board = (show ((+) 1 rowIndex)) ++ " |" ++
-    (concat (intersperse colSep (map printMaybePiece (board !! rowIndex)))) ++ "|\n"
+    (concat . intersperse colSep $ printMaybePiece <$> board !! rowIndex) ++ "|\n"
 --    (foldl (\colIdx row -> (printMaybePiece (board !! rowIndex !! colIdx))) ++ (board !! rowIndex))
 
 printBoard :: Board -> String
 printBoard board = "   A  B  C  D  E  F  G  H  \n" ++ rowSep
-    ++ (concat (intersperse rowSep ((map printRow [0..7]) <*> pure board))) ++ rowSep
-
+    ++ (concat . intersperse rowSep $ printRow  <$> [0..7] <*> pure board) ++ rowSep
 
 data Piece = Piece Color ChessPiece
 instance Show Piece where

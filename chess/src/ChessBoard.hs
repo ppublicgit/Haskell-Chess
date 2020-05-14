@@ -48,6 +48,14 @@ instance Show Color where
     show Black = "B"
     show White = "W"
 
+notColor :: Color -> Color
+notColor White = Black
+notColor Black = White
+
+turnToColor :: Int -> Color
+turnToColor 1 = White
+turnToColor _ = Black
+
 colorPiece :: Color -> ChessPiece -> Piece
 colorPiece color_in piece_in = Piece color_in piece_in
 
@@ -101,6 +109,10 @@ removePiece listPieces index
 
 updateScore :: Player -> Int -> Player
 updateScore p@(Player { score = s }) int = p { score = s + int}
+
+printPlayerScore :: Player -> String
+printPlayerScore (Player nm cl _ _ sr) =
+    "Player " <> nm <> " using " <> show cl <> " has score: " <> show sr
 
 -- Board Functions
 type Row = [Maybe Piece]
@@ -179,27 +191,146 @@ startBoard = [(Just <$> (colorPiece White) <$> baseRow), (Just <$> (colorPiece W
 -- Game Functions
 
 data Game = Game { gameBoard :: Board
-    , player1 :: Player
-    , player2 :: Player
+    , gamePlayer1 :: Player
+    , gamePlayer2 :: Player
     }
 
 game :: Game
 game = Game { gameBoard = startBoard
-    , player1 = whitePlayer
-    , player2 = blackPlayer
+    , gamePlayer1 = whitePlayer
+    , gamePlayer2 = blackPlayer
     }
 
 updateGamePlayers :: Game -> Player -> Player -> Game
-updateGamePlayers g p1 p2 = g { player1 = p1, player2 = p2 }
+updateGamePlayers g p1 p2 = g { gamePlayer1 = p1, gamePlayer2 = p2 }
 
 updateGameBoard :: Game -> Board -> Game
 updateGameBoard g b = g { gameBoard = b }
 
+printScore :: Game -> String
+printScore (Game _ p1 p2) = printPlayerScore p1 <> "\n" <> printPlayerScore p2
 
 -- MOVEMENT FUNCTIONS --
 
-isValidMove :: Piece -> Location -> Location -> Board -> Bool
-isValidMove (Piece color piece) locStart locEnd board
+isValidPlayerMove :: Game -> Location -> Location -> Color -> Bool
+isValidPlayerMove (Game board _ _) locStart@(Location cs rs) locEnd turnColor =
+    isValidMoveColor turnColor (board !! cs !! rs) && isValidMove (board !! cs !! rs) locStart locEnd board && (not $ isKingLeftInCheck board locStart locEnd turnColor)
+
+-- King Check checks
+isKingLeftInCheck :: Board -> Location -> Location -> Color-> Bool
+isKingLeftInCheck board ls le turnColor =
+    isKingInCheck newBoard turnColor
+    where newBoard = fst $ updateBoard board ls le
+
+isKingInCheck :: Board -> Color -> Bool
+isKingInCheck board turn =
+    isKingInDiagCheck kingLoc turn board ||
+    isKingInStraightCheck kingLoc turn board ||
+    isKingInKnightCheck kingLoc turn board ||
+    isKingInPawnCheck kingLoc turn board ||
+    isKingInKingCheck kingLoc turn board
+    where kingLoc = getKingLocation board turn
+
+isKingInPawnCheck :: Maybe Location -> Color -> Board -> Bool
+isKingInPawnCheck Nothing _ _ = False
+isKingInPawnCheck (Just (Location col row)) color board
+    | color == White = (checkPiece board (col + 1) (row + 1)) == Just (Piece (notColor color) Pawn) ||
+    (checkPiece board (col - 1) (row + 1)) == Just (Piece (notColor color) Pawn)
+    | color == Black = (checkPiece board (col + 1) (row - 1)) == Just (Piece (notColor color) Pawn) ||
+    (checkPiece board (col - 1) (row - 1)) == Just (Piece (notColor color) Pawn)
+    | otherwise = False
+
+isKingInKingCheck :: Maybe Location -> Color -> Board -> Bool
+isKingInKingCheck Nothing _ _ = False
+isKingInKingCheck (Just (Location col row)) color board =
+    (checkPiece board (col) (row + 1)) == Just (Piece (notColor color) King) ||
+    (checkPiece board (col) (row - 1)) == Just (Piece (notColor color) King) ||
+    (checkPiece board (col + 1) (row)) == Just (Piece (notColor color) King) ||
+    (checkPiece board (col + 1) (row)) == Just (Piece (notColor color) King) ||
+    (checkPiece board (col + 1) (row + 1)) == Just (Piece (notColor color) King) ||
+    (checkPiece board (col - 1) (row + 1)) == Just (Piece (notColor color) King) ||
+    (checkPiece board (col + 1) (row - 1)) == Just (Piece (notColor color) King) ||
+    (checkPiece board (col - 1) (row - 1)) == Just (Piece (notColor color) King)
+
+isKingInDiagCheck :: Maybe Location -> Color -> Board -> Bool
+isKingInDiagCheck Nothing _ _ = False
+isKingInDiagCheck (Just (Location col row)) color board =
+    (firstPiece Forward col row board) == Just (Piece (notColor color) Rook) ||
+    (firstPiece Backward col row board) == Just (Piece (notColor color) Rook) ||
+    (firstPiece Leftt col row board) == Just (Piece (notColor color) Rook) ||
+    (firstPiece Rightt col row board) == Just (Piece (notColor color) Rook) ||
+    (firstPiece Forward col row board) == Just (Piece (notColor color) Queen) ||
+    (firstPiece Backward col row board) == Just (Piece (notColor color) Queen) ||
+    (firstPiece Leftt col row board) == Just (Piece (notColor color) Queen) ||
+    (firstPiece Rightt col row board) == Just (Piece (notColor color) Queen)
+
+isKingInStraightCheck :: Maybe Location -> Color -> Board -> Bool
+isKingInStraightCheck Nothing _ _ = False
+isKingInStraightCheck (Just (Location col row)) color board =
+    (firstPiece Forward col row board) == Just (Piece (notColor color) Rook) ||
+    (firstPiece Backward col row board) == Just (Piece (notColor color) Rook) ||
+    (firstPiece Leftt col row board) == Just (Piece (notColor color) Rook) ||
+    (firstPiece Rightt col row board) == Just (Piece (notColor color) Rook) ||
+    (firstPiece Forward col row board) == Just (Piece (notColor color) Queen) ||
+    (firstPiece Backward col row board) == Just (Piece (notColor color) Queen) ||
+    (firstPiece Leftt col row board) == Just (Piece (notColor color) Queen) ||
+    (firstPiece Rightt col row board) == Just (Piece (notColor color) Queen)
+
+data Direction = Forward | Backward | Leftt | Rightt | DiagFR | DiagBR | DiagFL | DiagBL
+    deriving (Eq)
+
+firstPiece :: Direction -> ColLoc -> RowLoc -> Board -> Maybe Piece
+firstPiece dir col row bd
+    | col >7 || col < 0 || row > 7 || row < 0 = Nothing
+    | dir == Forward && (bd !! col !! row == Nothing) = firstPiece dir col (row + 1) bd
+    | dir == Backward && (bd !! col !! row == Nothing) = firstPiece dir col (row - 1) bd
+    | dir == Rightt && (bd !! col !! row == Nothing) = firstPiece dir (col + 1) row bd
+    | dir == Leftt && (bd !! col !! row == Nothing) = firstPiece dir (col - 1) row bd
+    | dir == DiagFR && (bd !! col !! row == Nothing) = firstPiece dir (col + 1) (row + 1) bd
+    | dir == DiagFL && (bd !! col !! row == Nothing) = firstPiece dir (col - 1) (row + 1) bd
+    | dir == DiagBR && (bd !! col !! row == Nothing) = firstPiece dir (col + 1) (row - 1) bd
+    | dir == DiagBL && (bd !! col !! row == Nothing) = firstPiece dir (col - 1) (row - 1) bd
+    | otherwise = bd !! col !! row
+
+
+isKingInKnightCheck :: Maybe Location -> Color -> Board -> Bool
+isKingInKnightCheck Nothing _ _ = False
+isKingInKnightCheck (Just (Location col row)) color board =
+    (checkPiece board (col + 2) (row + 1)) == Just (Piece (notColor color) Knight) ||
+    (checkPiece board (col + 2) (row - 1)) == Just (Piece (notColor color) Knight) ||
+    (checkPiece board (col - 2) (row + 1)) == Just (Piece (notColor color) Knight) ||
+    (checkPiece board (col - 2) (row - 1)) == Just (Piece (notColor color) Knight) ||
+    (checkPiece board (col + 1) (row + 2)) == Just (Piece (notColor color) Knight) ||
+    (checkPiece board (col - 1) (row + 2)) == Just (Piece (notColor color) Knight) ||
+    (checkPiece board (col + 1) (row - 2)) == Just (Piece (notColor color) Knight) ||
+    (checkPiece board (col - 1) (row - 2)) == Just (Piece (notColor color) Knight)
+
+checkPiece :: Board -> ColLoc -> RowLoc -> Maybe Piece
+checkPiece board col row
+    | col >7 || col < 0 || row > 7 || row < 0 = Nothing
+    | otherwise = board !! col !! row
+
+getKingLocation :: Board -> Color -> Maybe Location
+getKingLocation board color = getKingInBoard board color 0 0
+
+getKingInBoard :: Board -> Color -> ColLoc -> RowLoc -> Maybe Location
+getKingInBoard board color col row
+    | board !! col !! row == Just (Piece color King) = Just (Location col row)
+    | col < 8 = getKingInBoard board color (col + 1) row
+    | row < 8 = getKingInBoard board color col(row + 1)
+    | otherwise = Nothing
+
+-- Valid move check
+
+isValidMoveColor :: Color -> Maybe Piece -> Bool
+isValidMoveColor _ Nothing = False
+isValidMoveColor White (Just (Piece White _)) = True
+isValidMoveColor Black (Just (Piece Black _)) = True
+isValidMoveColor _ _ = False
+
+isValidMove :: Maybe Piece -> Location -> Location -> Board -> Bool
+isValidMove Nothing _ _ _ = False
+isValidMove (Just (Piece color piece)) locStart locEnd board
     | piece == Pawn = isValidPawnMove (Piece color piece) locStart locEnd board
     | piece == Bishop = isValidBishopMove (Piece color piece) locStart locEnd board
     | piece == Knight = isValidKnightMove (Piece color piece) locStart locEnd board

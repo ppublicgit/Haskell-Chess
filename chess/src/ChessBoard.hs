@@ -134,11 +134,11 @@ printBoard board = "   A  B  C  D  E  F  G  H  \n" ++ rowSep
 
 updateBoard :: Board -> Location -> Location -> (Board, Maybe Piece)
 updateBoard bd ls le@(Location ce re)
-    | (bd !! ce !! re) == Nothing = ((movePiece bd ls le), Nothing)
-    | otherwise = ((movePiece bd ls le), (bd !! ce !! re))
+    | (bd !! re !! ce) == Nothing = ((movePiece bd ls le), Nothing)
+    | otherwise = ((movePiece bd ls le), (bd !! re !! ce))
 
 movePiece :: Board -> Location -> Location -> Board
-movePiece bd (Location cs rs) (Location ce re) = (changeBoard (changeBoard bd Nothing cs rs) (bd !! cs !! rs) ce re)
+movePiece bd (Location cs rs) (Location ce re) = (changeBoard (changeBoard bd Nothing cs rs) (bd !! rs !! cs) ce re)
 
 changeBoard :: Board -> Maybe Piece -> ColLoc -> RowLoc -> Board
 changeBoard bd cp col row = fst splitRows ++ newRow ++ (tail $ snd splitRows)
@@ -214,7 +214,7 @@ printScore (Game _ p1 p2) = printPlayerScore p1 <> "\n" <> printPlayerScore p2
 
 isValidPlayerMove :: Game -> Location -> Location -> Color -> Bool
 isValidPlayerMove (Game board _ _) locStart@(Location cs rs) locEnd turnColor =
-    isValidMoveColor turnColor (board !! cs !! rs) && isValidMove (board !! cs !! rs) locStart locEnd board && (not $ isKingLeftInCheck board locStart locEnd turnColor)
+    isValidMoveColor turnColor (board !! rs !! cs) && isValidMove (board !! rs !! cs) locStart locEnd board && (not $ isKingLeftInCheck board locStart locEnd turnColor)
 
 -- King Check checks
 isKingLeftInCheck :: Board -> Location -> Location -> Color-> Bool
@@ -281,16 +281,16 @@ data Direction = Forward | Backward | Leftt | Rightt | DiagFR | DiagBR | DiagFL 
 
 firstPiece :: Direction -> ColLoc -> RowLoc -> Board -> Maybe Piece
 firstPiece dir col row bd
-    | col >7 || col < 0 || row > 7 || row < 0 = Nothing
-    | dir == Forward && (bd !! col !! row == Nothing) = firstPiece dir col (row + 1) bd
-    | dir == Backward && (bd !! col !! row == Nothing) = firstPiece dir col (row - 1) bd
-    | dir == Rightt && (bd !! col !! row == Nothing) = firstPiece dir (col + 1) row bd
-    | dir == Leftt && (bd !! col !! row == Nothing) = firstPiece dir (col - 1) row bd
-    | dir == DiagFR && (bd !! col !! row == Nothing) = firstPiece dir (col + 1) (row + 1) bd
-    | dir == DiagFL && (bd !! col !! row == Nothing) = firstPiece dir (col - 1) (row + 1) bd
-    | dir == DiagBR && (bd !! col !! row == Nothing) = firstPiece dir (col + 1) (row - 1) bd
-    | dir == DiagBL && (bd !! col !! row == Nothing) = firstPiece dir (col - 1) (row - 1) bd
-    | otherwise = bd !! col !! row
+    | col > 7 || col < 0 || row > 7 || row < 0 = Nothing
+    | dir == Forward && (bd !! row !! col == Nothing) = firstPiece dir col (row + 1) bd
+    | dir == Backward && (bd !! row !! col == Nothing) = firstPiece dir col (row - 1) bd
+    | dir == Rightt && (bd !! row !! col == Nothing) = firstPiece dir (col + 1) row bd
+    | dir == Leftt && (bd !! row !! col == Nothing) = firstPiece dir (col - 1) row bd
+    | dir == DiagFR && (bd !! row !! col == Nothing) = firstPiece dir (col + 1) (row + 1) bd
+    | dir == DiagFL && (bd !! row !! col == Nothing) = firstPiece dir (col - 1) (row + 1) bd
+    | dir == DiagBR && (bd !! row !! col == Nothing) = firstPiece dir (col + 1) (row - 1) bd
+    | dir == DiagBL && (bd !! row !! col == Nothing) = firstPiece dir (col - 1) (row - 1) bd
+    | otherwise = bd !! row !! col
 
 
 isKingInKnightCheck :: Maybe Location -> Color -> Board -> Bool
@@ -307,17 +307,17 @@ isKingInKnightCheck (Just (Location col row)) color board =
 
 checkPiece :: Board -> ColLoc -> RowLoc -> Maybe Piece
 checkPiece board col row
-    | col >7 || col < 0 || row > 7 || row < 0 = Nothing
-    | otherwise = board !! col !! row
+    | col > 7 || col < 0 || row > 7 || row < 0 = Nothing
+    | otherwise = board !! row !! col
 
 getKingLocation :: Board -> Color -> Maybe Location
 getKingLocation board color = getKingInBoard board color 0 0
 
 getKingInBoard :: Board -> Color -> ColLoc -> RowLoc -> Maybe Location
 getKingInBoard board color col row
-    | board !! col !! row == Just (Piece color King) = Just (Location col row)
+    | col == 8 = getKingInBoard board color 0 (row + 1)
+    | board !! row !! col == Just (Piece color King) = Just (Location col row)
     | col < 8 = getKingInBoard board color (col + 1) row
-    | row < 8 = getKingInBoard board color col(row + 1)
     | otherwise = Nothing
 
 -- Valid move check
@@ -404,7 +404,7 @@ isValidPawnMovement color (Location cs rs) (Location ce re)
 
 isValidBishopMove :: Piece -> Location -> Location -> Board -> Bool
 isValidBishopMove (Piece color _) locStart locEnd@(Location ce re) board =
-    (isValidBishopMovement locStart locEnd) && (isClearPath locStart locEnd board) && ((isOpen locEnd board) || (isEnemyPiece color (board !! ce !! re)))
+    (isValidBishopMovement locStart locEnd) && (isClearPath locStart locEnd board) && ((isOpen locEnd board) || (isEnemyPiece color (board !! re !! ce)))
 
 isValidBishopMovement :: Location -> Location -> Bool
 isValidBishopMovement (Location cs rs) (Location ce re)
@@ -413,7 +413,7 @@ isValidBishopMovement (Location cs rs) (Location ce re)
 
 isValidKnightMove :: Piece -> Location -> Location -> Board -> Bool
 isValidKnightMove (Piece color _) locStart locEnd@(Location ce re) board =
-    (isValidKnightMovement locStart locEnd) && ((isOpen locEnd board) || (isEnemyPiece color (board !! ce !! re)))
+    (isValidKnightMovement locStart locEnd) && ((isOpen locEnd board) || (isEnemyPiece color (board !! re !! ce)))
 
 isValidKnightMovement :: Location -> Location -> Bool
 isValidKnightMovement (Location cs rs) (Location ce re)
@@ -423,7 +423,7 @@ isValidKnightMovement (Location cs rs) (Location ce re)
 
 isValidRookMove :: Piece -> Location -> Location -> Board -> Bool
 isValidRookMove (Piece color _) locStart locEnd@(Location ce re) board =
-    (isValidRookMovement locStart locEnd) && (isClearPath locStart locEnd board) && ((isOpen locEnd board) || (isEnemyPiece color (board !! ce !! re)))
+    (isValidRookMovement locStart locEnd) && (isClearPath locStart locEnd board) && ((isOpen locEnd board) || (isEnemyPiece color (board !! re !! ce)))
 
 isValidRookMovement :: Location -> Location -> Bool
 isValidRookMovement (Location cs rs) (Location ce re)
@@ -432,7 +432,7 @@ isValidRookMovement (Location cs rs) (Location ce re)
 
 isValidQueenMove :: Piece -> Location -> Location -> Board -> Bool
 isValidQueenMove (Piece color _) locStart locEnd@(Location ce re) board =
-    (isValidQueenMovement locStart locEnd) && (isClearPath locStart locEnd board) && ((isOpen locEnd board) || (isEnemyPiece color (board !! ce !! re)))
+    (isValidQueenMovement locStart locEnd) && (isClearPath locStart locEnd board) && ((isOpen locEnd board) || (isEnemyPiece color (board !! re !! ce)))
 
 isValidQueenMovement :: Location -> Location -> Bool
 isValidQueenMovement (Location cs rs) (Location ce re)
@@ -442,7 +442,7 @@ isValidQueenMovement (Location cs rs) (Location ce re)
 
 isValidKingMove :: Piece -> Location -> Location -> Board -> Bool
 isValidKingMove (Piece color _) locStart locEnd@(Location ce re) board =
-    (isValidKingMovement locStart locEnd) && ((isOpen locEnd board) || (isEnemyPiece color (board !! ce !! re)))
+    (isValidKingMovement locStart locEnd) && ((isOpen locEnd board) || (isEnemyPiece color (board !! re !! ce)))
 
 isValidKingMovement :: Location -> Location -> Bool
 isValidKingMovement (Location cs rs) (Location ce re)

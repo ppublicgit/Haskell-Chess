@@ -49,7 +49,7 @@ checkPlayerMove inputs
 extractSingleMove :: String -> Location
 extractSingleMove move = Location col row
     where row = flip (-) 49 $ ord . toUpper $ move !! 1
-          col = flip (-) 65 $ ord . toUpper $ move !! 1
+          col = flip (-) 65 $ ord . toUpper $ move !! 0
 
 extractMove :: String -> (Location, Location)
 extractMove inputMove = ((extractSingleMove $ take 2 inputMove), (extractSingleMove $ reverse . take 2 $ reverse inputMove))
@@ -88,7 +88,6 @@ runGame :: Game -> Int -> IO ()
 runGame gm@(Game board _ _) playerTurn = do
     putStrLn $ printBoard board
     gameOver gm playerTurn
-    putStrLn $ printBoard board
     move <- getPlayerMove gm playerTurn
     if isValidPlayerMove gm (fst move) (snd move) (turnToColor playerTurn) then
         runGame (makeMove gm (fst move) (snd move) playerTurn) (nextTurn playerTurn)

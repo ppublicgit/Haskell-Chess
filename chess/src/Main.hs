@@ -5,6 +5,7 @@ import System.Exit(exitSuccess)
 import Data.Char(toUpper, ord)
 import System.IO
 import Data.List(elem)
+import Data.Maybe(fromJust)
 
 import ChessBoard
 
@@ -20,12 +21,51 @@ congratsString (Game _ (Player name1 _ _ _ _) (Player name2 _ _ _ _)) playerTurn
     | playerTurn == 2 = "Congrats " <> name1 <> ". You have beaten " <> name2 <> " in your game of chess!"
     | otherwise = "Neither player wins. What is happening?"
 
-gameOver :: Game -> Int -> IO ()
-gameOver gm int =
-    if checkCapturedKing gm int then
-      do putStrLn $ congratsString gm int
-         exitSuccess
-    else return ()
+stalelmateString :: Game -> String
+stalelmateString (Game _ (Player name1 _ _ _ _) (Player name2 _ _ _ _)) = "Boo, you have reached a stalemate. Enjoy your tie " <> name1 <> " and " <> name2 <> "."
+
+{--
+checkStalemate :: Game -> Int -> Int -> Int -> IO Bool
+checkStalemate gm@(Game _ (Player name1 _ _ _ _) (Player name2 _ _ _ _)) failedMoveCount playerTurn both = do
+    stale <- askStalemate name1 name2 playerTurn both
+    if failedMoveCount < 3 then
+        return False
+    else
+        if both == 2 then
+            return True
+        else
+            if both == 0 && stale then
+                checkStalemate gm playerTurn 1
+            else
+                if both == 1 && stale then
+                    checkStalemate gm playerTurn 2
+                else
+                    return False
+
+    | failedMoveCount < 3 = return False
+    | both == 0 && askStalemate name1 name2 playerTurn both = checkStalemate gm playerTurn 1
+    | both == 1 && askStalemate name1 name2 playerTurn both = checkStalemate gm playerTurn 2
+    | both == 2 = return True
+    | otherwise = return False
+
+askStalemate :: String -> String -> Int -> IO Bool
+askStalemate name1 name2 playerTurn = do
+    if playerTurn == 1 then
+        putStrLn $ "Is this a stalemate?"
+--}
+
+
+gameOver :: Game -> Int -> Int -> IO ()
+gameOver gm int failedMoveCount = do
+    if checkCapturedKing gm int then do
+        putStrLn $ congratsString gm int
+        exitSuccess
+    else
+        if failedMoveCount > 3 then do
+            putStrLn $ stalelmateString gm
+            exitSuccess
+        else do
+            return ()
 
 askPlayerMove :: String -> String -> Int -> IO ()
 askPlayerMove name1 name2 turn = do
@@ -84,16 +124,43 @@ updateAll gm@(Game _ p1 p2) (newBoard, (Just (Piece _ cp))) _ =
     where newPlayer2 = updateScore (updateCaptured p2 cp) (pieceValue cp)
           newPlayer1 = updateActive p1 cp
 
-runGame :: Game -> Int -> IO ()
-runGame gm@(Game board _ _) playerTurn = do
-    putStrLn $ printBoard board
-    gameOver gm playerTurn
-    move <- getPlayerMove gm playerTurn
-    if isValidPlayerMove gm (fst move) (snd move) (turnToColor playerTurn) then
-        runGame (makeMove gm (fst move) (snd move) playerTurn) (nextTurn playerTurn)
+validPawnPromote :: String -> (Bool, Maybe ChessPiece)
+validPawnPromote newPiece
+    | newPiece == "Pawn" = (True, Just Pawn)
+    | newPiece == "Knight" = (True, Just Knight)
+    | newPiece == "Bishop" = (True, Just Bishop)
+    | newPiece == "Rook" = (True, Just Rook)
+    | newPiece == "Queen" = (True, Just Queen)
+    | otherwise = (False, Nothing)
+
+getPawnPromotion :: IO ChessPiece
+getPawnPromotion = do
+    putStrLn $ "Promoting Pawn. What piece would you like? Pawn, Knight, Bishop, Rook or Queen?"
+    input <- getLine
+    if fst (validPawnPromote input) then
+        return $ fromJust (snd (validPawnPromote input))
     else do
-        putStrLn $ "Invalid move specified."
-        runGame gm playerTurn
+        putStrLn $ "Invalid piece specified for pawn promote."
+        ret <- getPawnPromotion
+        return ret
+
+runGame :: Game -> Int -> Int -> String -> IO ()
+runGame gm@(Game board _ _) playerTurn turnCounter errorString = do
+    if turnCounter > 0 then
+        putStrLn $ errorString
+    else do
+        putStrLn $ printBoard board
+    gameOver gm playerTurn turnCounter
+    move <- getPlayerMove gm playerTurn
+    let isValidResponse = isValidPlayerMove gm (fst move) (snd move) (turnToColor playerTurn)
+    if fst isValidResponse then do
+        if  checkPawnPromotion gm (fst move) (snd move) then do
+            pawnPromotePiece <- getPawnPromotion
+            runGame (promotePawn (makeMove gm (fst move) (snd move) playerTurn) (snd move) pawnPromotePiece) (nextTurn playerTurn) 0 ""
+        else do
+            runGame (makeMove gm (fst move) (snd move) playerTurn) (nextTurn playerTurn) 0 ""
+    else do
+        runGame gm playerTurn (1 + turnCounter) ("Invalid move specified. " <> (fromJust $ snd isValidResponse))
 
 
 
@@ -109,4 +176,4 @@ main = do
     let player2 = updatePlayerName blackPlayer player2name
     let newGame = updateGamePlayers game player1 player2
     putStrLn $ "When it is your turn, specify moves by two characters of column row for start, and then two characters for column and row as end. Example: A3 C5"
-    runGame newGame 1
+    runGame newGame 1 0 ""

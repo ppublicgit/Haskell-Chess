@@ -144,5 +144,5 @@ main = do
     player2name <- getLine
     let player2 = updatePlayerName blackPlayer player2name
     let newGame = updateGamePlayers game player1 player2
-    putStrLn $ "When it is your turn, specify moves by two characters of column row for start, and then two characters for column and row as end. Example: A3 C5"
+    putStrLn $ "When it is your turn, specify moves by two characters of column row for start, and then two characters for column and row as end. Example: A2 C5"
     runGame newGame 1 0 ""

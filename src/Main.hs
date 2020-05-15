@@ -125,7 +125,9 @@ runGame gm@(Game board _ _) playerTurn turnCounter errorString = do
     if fst isValidResponse then do
         if  checkPawnPromotion gm (fst move) (snd move) then do
             pawnPromotePiece <- getPawnPromotion
-            runGame (promotePawn (makeMove gm (fst move) (snd move) playerTurn) (snd move) pawnPromotePiece) (nextTurn playerTurn) 0 ""
+            let updatedGame = (promotePawn (makeMove gm (fst move) (snd move) playerTurn) (snd move) pawnPromotePiece)
+            gameOver gm playerTurn
+            runGame updatedGame (nextTurn playerTurn) 0 ""
         else do
             runGame (makeMove gm (fst move) (snd move) playerTurn) (nextTurn playerTurn) 0 ""
     else do

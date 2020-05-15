@@ -1,23 +1,9 @@
 module ChessBoard where
-{--
-    ( ChessPiece
-    , Row
-    , Board
-    , Pieces
-    , Player
-    , Color
-    , pieceValue
-    , Game
-    , printBoard
-    , startBoard
-    , whitePlayer
-    , blackPlayer
-    , game
-    ) where
---}
 
 import Data.List
 import Data.Maybe (fromJust)
+
+----------------------------- ChessPiece Piece and Color data types ----------------------------
 
 data ChessPiece = Pawn | Bishop | Knight | Rook | Queen | King
     deriving (Eq)
@@ -73,7 +59,7 @@ pieceValue Rook = 5
 pieceValue Queen = 9
 pieceValue King = 10
 
--- Player Functions
+--------------------------------- Player Data type and Functions -----------------------------
 
 data Player = Player { name :: String
     , playerColor :: Color
@@ -120,7 +106,8 @@ printPlayerScore :: Player -> String
 printPlayerScore (Player nm cl _ _ sr) =
     "Player " <> nm <> " using " <> show cl <> " has score: " <> show sr
 
--- Board Functions
+------------------------------- Board type Functions --------------------------------
+
 type Row = [Maybe Piece]
 
 type Board = [Row]
@@ -197,7 +184,7 @@ startBoard :: Board
 startBoard = [(Just <$> (colorPiece White) <$> baseRow), (Just <$> (colorPiece White) <$> pawnRow),
     emptyRow, emptyRow , emptyRow, emptyRow, (Just <$> (colorPiece Black) <$> pawnRow), (Just <$> (colorPiece Black) <$> baseRow)]
 
--- Game Functions
+------------------------------------- Game Functions -------------------------------
 
 data Game = Game { gameBoard :: Board
     , gamePlayer1 :: Player
@@ -230,7 +217,7 @@ promotePawn gm@(Game board _ _) loc@(Location col row) cp =
     updateGameBoard gm (promotePawnBoard board loc color cp)
     where color = fromPieceToColor $ fromJust (board !! row !! col)
 
--- Game Over Functions
+-------------------------------------- Game Over Functions ----------------------------------
 
 data GameOver = CheckMate | StaleMate | Unfinished
     deriving (Show, Eq)
@@ -354,7 +341,7 @@ isAnyKingMove gm color col row
     | fst $ isValidPlayerMove gm (Location col row) (Location (col - 1) (row - 0)) color  = True
     | otherwise = False
 
--- MOVEMENT FUNCTIONS --
+--------------------------------------- Move Checks  --------------------------------------
 
 isValidPlayerMove :: Game -> Location -> Location -> Color -> (Bool, Maybe String)
 isValidPlayerMove (Game board _ _) locStart@(Location cs rs) locEnd@(Location ce re) turnColor
@@ -365,7 +352,8 @@ isValidPlayerMove (Game board _ _) locStart@(Location cs rs) locEnd@(Location ce
     | isKingLeftInCheck board locStart locEnd turnColor = (False, Just "Your King is left in Check!")
     | otherwise = (True, Nothing)
 
--- King Check checks
+------------------------------ King in Check checks -----------------------------------
+
 isKingLeftInCheck :: Board -> Location -> Location -> Color-> Bool
 isKingLeftInCheck board ls le turnColor =
     isKingInCheck newBoard turnColor
@@ -469,7 +457,7 @@ getKingInBoard board color col row
     | col < 8 = getKingInBoard board color (col + 1) row
     | otherwise = Nothing
 
--- Valid move check
+--------------------------------- Valid move check ------------------------------
 
 isValidMoveColor :: Color -> Maybe Piece -> Bool
 isValidMoveColor _ Nothing = False

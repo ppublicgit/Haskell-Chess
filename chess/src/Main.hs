@@ -1,6 +1,5 @@
 module Main where
 
---import Control.Monad(forever)
 import System.Exit(exitSuccess)
 import Data.Char(toUpper, ord)
 import System.IO

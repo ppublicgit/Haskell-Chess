@@ -24,44 +24,14 @@ congratsString (Game _ (Player name1 _ _ _ _) (Player name2 _ _ _ _)) playerTurn
 stalelmateString :: Game -> String
 stalelmateString (Game _ (Player name1 _ _ _ _) (Player name2 _ _ _ _)) = "Boo, you have reached a stalemate. Enjoy your tie " <> name1 <> " and " <> name2 <> "."
 
-{--
-checkStalemate :: Game -> Int -> Int -> Int -> IO Bool
-checkStalemate gm@(Game _ (Player name1 _ _ _ _) (Player name2 _ _ _ _)) failedMoveCount playerTurn both = do
-    stale <- askStalemate name1 name2 playerTurn both
-    if failedMoveCount < 3 then
-        return False
-    else
-        if both == 2 then
-            return True
-        else
-            if both == 0 && stale then
-                checkStalemate gm playerTurn 1
-            else
-                if both == 1 && stale then
-                    checkStalemate gm playerTurn 2
-                else
-                    return False
-
-    | failedMoveCount < 3 = return False
-    | both == 0 && askStalemate name1 name2 playerTurn both = checkStalemate gm playerTurn 1
-    | both == 1 && askStalemate name1 name2 playerTurn both = checkStalemate gm playerTurn 2
-    | both == 2 = return True
-    | otherwise = return False
-
-askStalemate :: String -> String -> Int -> IO Bool
-askStalemate name1 name2 playerTurn = do
-    if playerTurn == 1 then
-        putStrLn $ "Is this a stalemate?"
---}
-
-
-gameOver :: Game -> Int -> Int -> IO ()
-gameOver gm int failedMoveCount = do
-    if checkCapturedKing gm int then do
+gameOver :: Game -> Int -> IO ()
+gameOver gm int = do
+    let gameFinished = isGameOver gm (turnToColor int)
+    if gameFinished == CheckMate then do
         putStrLn $ congratsString gm int
         exitSuccess
     else
-        if failedMoveCount > 3 then do
+        if gameFinished == StaleMate then do
             putStrLn $ stalelmateString gm
             exitSuccess
         else do
@@ -150,7 +120,7 @@ runGame gm@(Game board _ _) playerTurn turnCounter errorString = do
         putStrLn $ errorString
     else do
         putStrLn $ printBoard board
-    gameOver gm playerTurn turnCounter
+    gameOver gm playerTurn
     move <- getPlayerMove gm playerTurn
     let isValidResponse = isValidPlayerMove gm (fst move) (snd move) (turnToColor playerTurn)
     if fst isValidResponse then do
@@ -161,8 +131,6 @@ runGame gm@(Game board _ _) playerTurn turnCounter errorString = do
             runGame (makeMove gm (fst move) (snd move) playerTurn) (nextTurn playerTurn) 0 ""
     else do
         runGame gm playerTurn (1 + turnCounter) ("Invalid move specified. " <> (fromJust $ snd isValidResponse))
-
-
 
 main :: IO ()
 main = do

@@ -1,11 +1,11 @@
 
 ==================== FINAL INTERFACE ====================
-2020-05-15 15:43:53.0937564 UTC
+2020-05-15 16:57:04.0574142 UTC
 
 interface main:ChessBoard 8065
-  interface hash: ef6533a0fa3f3cabb79414a8739e5fda
-  ABI hash: da98236c584648e03779340611973264
-  export-list hash: 119ff9d411bc1d4d63724bfe45979732
+  interface hash: bcf4829113e8a64563358fab8fb6b23b
+  ABI hash: e99d665849fa1dcac8a64ec03d28fea7
+  export-list hash: 13b42b22814f31f9b42801af93b414ca
   orphan hash: 693e9af84d3dfcc71e640e005bdc5e2e
   flag hash: 60a29d9b0283457aa1b23a7b8469000f
   opt_hash: 6faf2de08de32d19db9870899d88e59a
@@ -22,6 +22,8 @@ exports:
   ChessBoard.checkPiece
   ChessBoard.colSep
   ChessBoard.colorPiece
+  ChessBoard.cycleBoardCheck
+  ChessBoard.cycleMoveCheck
   ChessBoard.emptyRow
   ChessBoard.firstPiece
   ChessBoard.fromPieceToChessPiece
@@ -29,8 +31,19 @@ exports:
   ChessBoard.game
   ChessBoard.getKingInBoard
   ChessBoard.getKingLocation
+  ChessBoard.getNextCol
+  ChessBoard.getNextRow
+  ChessBoard.isAnyBishopMove
+  ChessBoard.isAnyKingMove
+  ChessBoard.isAnyKnightMove
+  ChessBoard.isAnyMove
+  ChessBoard.isAnyMoveRecurse
+  ChessBoard.isAnyPawnMove
+  ChessBoard.isAnyQueenMove
+  ChessBoard.isAnyRookMove
   ChessBoard.isClearPath
   ChessBoard.isEnemyPiece
+  ChessBoard.isGameOver
   ChessBoard.isKingInCheck
   ChessBoard.isKingInDiagCheck
   ChessBoard.isKingInKingCheck
@@ -91,6 +104,7 @@ exports:
   ChessBoard.Color{ChessBoard.Black ChessBoard.White}
   ChessBoard.Direction{ChessBoard.Backward ChessBoard.DiagBL ChessBoard.DiagBR ChessBoard.DiagFL ChessBoard.DiagFR ChessBoard.Forward ChessBoard.Leftt ChessBoard.Rightt}
   ChessBoard.Game{ChessBoard.Game gameBoard gamePlayer1 gamePlayer2}
+  ChessBoard.GameOver{ChessBoard.CheckMate ChessBoard.StaleMate ChessBoard.Unfinished}
   ChessBoard.Location{ChessBoard.Location}
   ChessBoard.Piece{ChessBoard.Piece}
   ChessBoard.Pieces
@@ -291,6 +305,49 @@ a9339aa10bc82e16fb147d7654bbb4ff
                    -> case ds1 of wild1 {
                         DEFAULT -> GHC.Types.False
                         ChessBoard.DiagBL -> GHC.Types.True } }) -}
+84ebeb4fb08dba347017ed67982bc062
+  $fEqGameOver :: GHC.Classes.Eq ChessBoard.GameOver
+  DFunId
+  {- HasNoCafRefs, Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ ChessBoard.GameOver
+                  ChessBoard.$fEqGameOver_$c==
+                  ChessBoard.$fEqGameOver_$c/= -}
+84ebeb4fb08dba347017ed67982bc062
+  $fEqGameOver_$c/= ::
+    ChessBoard.GameOver -> ChessBoard.GameOver -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U><S,1*U>,
+     Inline: (sat-args=2),
+     Unfolding: InlineRule (2, False, False)
+                (\ (x2 :: ChessBoard.GameOver) (y :: ChessBoard.GameOver) ->
+                 case x2 of wild {
+                   ChessBoard.CheckMate
+                   -> case y of wild1 {
+                        DEFAULT -> GHC.Types.True ChessBoard.CheckMate -> GHC.Types.False }
+                   ChessBoard.StaleMate
+                   -> case y of wild1 {
+                        DEFAULT -> GHC.Types.True ChessBoard.StaleMate -> GHC.Types.False }
+                   ChessBoard.Unfinished
+                   -> case y of wild1 {
+                        DEFAULT -> GHC.Types.True
+                        ChessBoard.Unfinished -> GHC.Types.False } }) -}
+84ebeb4fb08dba347017ed67982bc062
+  $fEqGameOver_$c== ::
+    ChessBoard.GameOver -> ChessBoard.GameOver -> GHC.Types.Bool
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U><S,1*U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (ds :: ChessBoard.GameOver) (ds1 :: ChessBoard.GameOver) ->
+                 case ds of wild {
+                   ChessBoard.CheckMate
+                   -> case ds1 of wild1 {
+                        DEFAULT -> GHC.Types.False ChessBoard.CheckMate -> GHC.Types.True }
+                   ChessBoard.StaleMate
+                   -> case ds1 of wild1 {
+                        DEFAULT -> GHC.Types.False ChessBoard.StaleMate -> GHC.Types.True }
+                   ChessBoard.Unfinished
+                   -> case ds1 of wild1 {
+                        DEFAULT -> GHC.Types.False
+                        ChessBoard.Unfinished -> GHC.Types.True } }) -}
 c96a7f101a22e2b2d8fdf2cc4d7a27a9
   $fEqPiece :: GHC.Classes.Eq ChessBoard.Piece
   DFunId
@@ -494,7 +551,66 @@ f97401eb4a27b45ed9c67d6b048b26eb
                            (n9 :: b)[OneShot] ->
                          GHC.Base.foldr @ GHC.Types.Char @ b c n9 ChessBoard.$fShowColor2)
                         s }) -}
-559254018c5392740c2c465834c486b9
+84ebeb4fb08dba347017ed67982bc062
+  $fShowGameOver :: GHC.Show.Show ChessBoard.GameOver
+  DFunId
+  {- Strictness: m, Inline: CONLIKE,
+     Unfolding: DFun:.
+                  @ ChessBoard.GameOver
+                  ChessBoard.$fShowGameOver_$cshowsPrec
+                  ChessBoard.$fShowGameOver_$cshow
+                  ChessBoard.$fShowGameOver_$cshowList -}
+4fd007f9dbb6a222b1a48713621846b8
+  $fShowGameOver1 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString#
+                   ChessBoard.$fShowGameOver2) -}
+c010e5ed36ae8e1f8c58667f6c0115bf
+  $fShowGameOver2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("Unfinished"#) -}
+a4e692bd1cced4b7e22efb03494db34b
+  $fShowGameOver3 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString#
+                   ChessBoard.$fShowGameOver4) -}
+25a01c9d6bb5c276f5df4cefdc7503c4
+  $fShowGameOver4 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("StaleMate"#) -}
+b6816a2cdc38cb195226a0e229c0fc0c
+  $fShowGameOver5 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString#
+                   ChessBoard.$fShowGameOver6) -}
+ba85df85c53d3bc33f44b605fe093bbe
+  $fShowGameOver6 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("CheckMate"#) -}
+84ebeb4fb08dba347017ed67982bc062
+  $fShowGameOver_$cshow :: ChessBoard.GameOver -> GHC.Base.String
+  {- Arity: 1, Strictness: <S,1*U>,
+     Unfolding: InlineRule (1, True, False)
+                (\ (x2 :: ChessBoard.GameOver) ->
+                 case x2 of wild {
+                   ChessBoard.CheckMate -> ChessBoard.$fShowGameOver5
+                   ChessBoard.StaleMate -> ChessBoard.$fShowGameOver3
+                   ChessBoard.Unfinished -> ChessBoard.$fShowGameOver1 }) -}
+84ebeb4fb08dba347017ed67982bc062
+  $fShowGameOver_$cshowList ::
+    [ChessBoard.GameOver] -> GHC.Show.ShowS
+  {- Arity: 2, Strictness: <S,1*U><L,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (ls :: [ChessBoard.GameOver]) (s :: GHC.Base.String) ->
+                 GHC.Show.showList__
+                   @ ChessBoard.GameOver
+                   ChessBoard.$w$cshowsPrec1
+                   ls
+                   s) -}
+84ebeb4fb08dba347017ed67982bc062
+  $fShowGameOver_$cshowsPrec ::
+    GHC.Types.Int -> ChessBoard.GameOver -> GHC.Show.ShowS
+  {- Arity: 3, Strictness: <L,A><S,1*U><L,1*U>, Inline: [2],
+     Unfolding: InlineRule (3, True, True)
+                (\ (w :: GHC.Types.Int)
+                   (w1 :: ChessBoard.GameOver)
+                   (w2 :: GHC.Base.String) ->
+                 ChessBoard.$w$cshowsPrec1 w1 w2) -}
+61763d609e56610dc321c7932fa09a95
   $fShowLocation :: GHC.Show.Show ChessBoard.Location
   DFunId
   {- Strictness: m, Inline: CONLIKE,
@@ -503,13 +619,13 @@ f97401eb4a27b45ed9c67d6b048b26eb
                   ChessBoard.$fShowLocation_$cshowsPrec
                   ChessBoard.$fShowLocation_$cshow
                   ChessBoard.$fShowLocation_$cshowList -}
-559254018c5392740c2c465834c486b9
+61763d609e56610dc321c7932fa09a95
   $fShowLocation1 :: ChessBoard.Location -> GHC.Show.ShowS
   {- Arity: 2, Strictness: <S(S(S)L),1*U(1*U(1*U),1*U(U))><L,1*U>,
      Unfolding: (\ (w :: ChessBoard.Location) (w1 :: GHC.Base.String) ->
                  case w of ww { ChessBoard.Location ww1 ww2 ->
                  case ww1 of ww3 { GHC.Types.I# ww4 ->
-                 ChessBoard.$w$cshowsPrec1 ww4 ww2 w1 } }) -}
+                 ChessBoard.$w$cshowsPrec2 ww4 ww2 w1 } }) -}
 a5f4a087ffe014a19991b83911e29fe8
   $fShowLocation10 :: [GHC.Types.Char]
   {- Unfolding: (GHC.CString.unpackCString#
@@ -566,7 +682,7 @@ f41caea969b04014971bc066a64d4dd5
 75876a2ac7ec0e9dcb403e8dd732f622
   $fShowLocation9 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("E"#) -}
-559254018c5392740c2c465834c486b9
+61763d609e56610dc321c7932fa09a95
   $fShowLocation_$cshow :: ChessBoard.Location -> GHC.Base.String
   {- Arity: 1, Strictness: <S(S(S)L),1*U(1*U(1*U),1*U(U))>,
      Inline: [2],
@@ -575,7 +691,7 @@ f41caea969b04014971bc066a64d4dd5
                  case w of ww { ChessBoard.Location ww1 ww2 ->
                  case ww1 of ww3 { GHC.Types.I# ww4 ->
                  ChessBoard.$w$cshow ww4 ww2 } }) -}
-559254018c5392740c2c465834c486b9
+61763d609e56610dc321c7932fa09a95
   $fShowLocation_$cshowList ::
     [ChessBoard.Location] -> GHC.Show.ShowS
   {- Arity: 2, Strictness: <S,1*U><L,U>,
@@ -586,7 +702,7 @@ f41caea969b04014971bc066a64d4dd5
                    ChessBoard.$fShowLocation1
                    ls
                    s) -}
-559254018c5392740c2c465834c486b9
+61763d609e56610dc321c7932fa09a95
   $fShowLocation_$cshowsPrec ::
     GHC.Types.Int -> ChessBoard.Location -> GHC.Show.ShowS
   {- Arity: 3,
@@ -598,7 +714,7 @@ f41caea969b04014971bc066a64d4dd5
                    (w2 :: GHC.Base.String) ->
                  case w1 of ww { ChessBoard.Location ww1 ww2 ->
                  case ww1 of ww3 { GHC.Types.I# ww4 ->
-                 ChessBoard.$w$cshowsPrec1 ww4 ww2 w2 } }) -}
+                 ChessBoard.$w$cshowsPrec2 ww4 ww2 w2 } }) -}
 c96a7f101a22e2b2d8fdf2cc4d7a27a9
   $fShowPiece :: GHC.Show.Show ChessBoard.Piece
   DFunId
@@ -665,7 +781,7 @@ c96a7f101a22e2b2d8fdf2cc4d7a27a9
                       n9
                       (ChessBoard.printPiece c cp))
                    s }) -}
-d6bf4731b011c565064b8deb38b9aa7c
+8e056af4d83966ffb6cca0fdd40d0ace
   $fShowPlayer :: GHC.Show.Show ChessBoard.Player
   DFunId
   {- Strictness: m, Inline: CONLIKE,
@@ -674,16 +790,16 @@ d6bf4731b011c565064b8deb38b9aa7c
                   ChessBoard.$fShowPlayer_$cshowsPrec
                   ChessBoard.$fShowPlayer_$cshow
                   ChessBoard.$fShowPlayer_$cshowList -}
-d6bf4731b011c565064b8deb38b9aa7c
+8e056af4d83966ffb6cca0fdd40d0ace
   $fShowPlayer1 :: ChessBoard.Player -> GHC.Show.ShowS
   {- Arity: 2, Strictness: <S,1*U(1*U,1*U,1*U,1*U,1*U(U))><L,U>,
      Unfolding: (\ (w :: ChessBoard.Player) (w1 :: GHC.Base.String) ->
                  case w of ww { ChessBoard.Player ww1 ww2 ww3 ww4 ww5 ->
-                 ChessBoard.$w$cshowsPrec2 0# ww1 ww2 ww3 ww4 ww5 w1 }) -}
+                 ChessBoard.$w$cshowsPrec3 0# ww1 ww2 ww3 ww4 ww5 w1 }) -}
 ebfc72f61778ace27caa99d0c2fa9c95
   $fShowPlayer2 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 0#) -}
-d6bf4731b011c565064b8deb38b9aa7c
+8e056af4d83966ffb6cca0fdd40d0ace
   $fShowPlayer_$cshow :: ChessBoard.Player -> GHC.Base.String
   {- Arity: 1, Strictness: <S,1*U(1*U,1*U,1*U,1*U,1*U(U))>,
      Unfolding: InlineRule (1, True, False)
@@ -692,7 +808,7 @@ d6bf4731b011c565064b8deb38b9aa7c
                    ChessBoard.$fShowPlayer2
                    x2
                    (GHC.Types.[] @ GHC.Types.Char)) -}
-d6bf4731b011c565064b8deb38b9aa7c
+8e056af4d83966ffb6cca0fdd40d0ace
   $fShowPlayer_$cshowList :: [ChessBoard.Player] -> GHC.Show.ShowS
   {- Arity: 2, Strictness: <S,1*U><L,U>,
      Unfolding: InlineRule (2, True, False)
@@ -702,7 +818,7 @@ d6bf4731b011c565064b8deb38b9aa7c
                    ChessBoard.$fShowPlayer1
                    ls
                    s) -}
-d6bf4731b011c565064b8deb38b9aa7c
+8e056af4d83966ffb6cca0fdd40d0ace
   $fShowPlayer_$cshowsPrec ::
     GHC.Types.Int -> ChessBoard.Player -> GHC.Show.ShowS
   {- Arity: 3,
@@ -714,7 +830,7 @@ d6bf4731b011c565064b8deb38b9aa7c
                    (w2 :: GHC.Base.String) ->
                  case w of ww { GHC.Types.I# ww1 ->
                  case w1 of ww2 { ChessBoard.Player ww3 ww4 ww5 ww6 ww7 ->
-                 ChessBoard.$w$cshowsPrec2 ww1 ww3 ww4 ww5 ww6 ww7 w2 } }) -}
+                 ChessBoard.$w$cshowsPrec3 ww1 ww3 ww4 ww5 ww6 ww7 w2 } }) -}
 6bbd0b1da256987b5c374ff1b28945be
   $tc'Backward :: GHC.Types.TyCon
   {- HasNoCafRefs, Strictness: m,
@@ -775,6 +891,26 @@ effc5bca8673faf71501b9db6375ecbf
 44348573747af1a772959c5c880a9aad
   $tc'Black3 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("'Black"#) -}
+f72dcde621eecbfff900986c11643939
+  $tc'CheckMate :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   244229523097746280##
+                   6713682609734780876##
+                   ChessBoard.$trModule
+                   ChessBoard.$tc'CheckMate2
+                   0#
+                   ChessBoard.$tc'CheckMate1) -}
+9bd4a178aa80c2744e1c58bdd00584ec
+  $tc'CheckMate1 :: GHC.Types.KindRep
+  {- HasNoCafRefs, Strictness: m1, Inline: [~] -}
+b706b236ccb5f72e9ef8831df20d0530
+  $tc'CheckMate2 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS ChessBoard.$tc'CheckMate3) -}
+16ab9fc0ba091fadb60f11e67ec7d5bf
+  $tc'CheckMate3 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'CheckMate"#) -}
 d26f7a8337a0cf375f6f837a3c666923
   $tc'DiagBL :: GHC.Types.TyCon
   {- HasNoCafRefs, Strictness: m,
@@ -1059,6 +1195,40 @@ e4db1d766aca27dc32c9e6d9201d2e00
 1c4dcd3bedcbabcb9e1b7b8082117ffe
   $tc'Rook2 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("'Rook"#) -}
+2ad4d1223b2d1c2d315eb15f4d11ea39
+  $tc'StaleMate :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   4918757790118876704##
+                   481521187216262725##
+                   ChessBoard.$trModule
+                   ChessBoard.$tc'StaleMate1
+                   0#
+                   ChessBoard.$tc'CheckMate1) -}
+2f0b56e27cf527f2dc28fc24a4c4175e
+  $tc'StaleMate1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS ChessBoard.$tc'StaleMate2) -}
+9886a647b903cc8e65420006b7db52a3
+  $tc'StaleMate2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'StaleMate"#) -}
+6a5a83bbe06e20ef1544b796c9f02e6f
+  $tc'Unfinished :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   9828605474628407994##
+                   292116914215697706##
+                   ChessBoard.$trModule
+                   ChessBoard.$tc'Unfinished1
+                   0#
+                   ChessBoard.$tc'CheckMate1) -}
+bdb2db90bcf600f2dd80ea58464f94a8
+  $tc'Unfinished1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS ChessBoard.$tc'Unfinished2) -}
+36fcbaefd95974ba1fc4eb4a6081559a
+  $tc'Unfinished2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("'Unfinished"#) -}
 a9a85a4f5e8722e2e7a032a8c4dac513
   $tc'White :: GHC.Types.TyCon
   {- HasNoCafRefs, Strictness: m,
@@ -1144,6 +1314,23 @@ a882cf40a198865bc49b3ddec238ed30
 2c5debd32faa97b7c0659df75d3808ad
   $tcGame2 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("Game"#) -}
+d5e56e84d9101b03ebc5ab5f1eb24c12
+  $tcGameOver :: GHC.Types.TyCon
+  {- HasNoCafRefs, Strictness: m,
+     Unfolding: (GHC.Types.TyCon
+                   18176669151516859591##
+                   1818438445336014487##
+                   ChessBoard.$trModule
+                   ChessBoard.$tcGameOver1
+                   0#
+                   GHC.Types.krep$*) -}
+9beeabf524386bd003c28e3852351978
+  $tcGameOver1 :: GHC.Types.TrName
+  {- HasNoCafRefs, Strictness: m1,
+     Unfolding: (GHC.Types.TrNameS ChessBoard.$tcGameOver2) -}
+0e4286ddd800378edf825171398aa802
+  $tcGameOver2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("GameOver"#) -}
 45d2282971ceff46e258d067eb3c9786
   $tcLocation :: GHC.Types.TyCon
   {- HasNoCafRefs, Strictness: m,
@@ -1272,8 +1459,20 @@ a9339aa10bc82e16fb147d7654bbb4ff
                         @ GHC.Types.Char
                         ChessBoard.$fShowChessPiece1
                         w1 }) -}
-066830feaf72d5eb692e83d8d3ab5e73
+84ebeb4fb08dba347017ed67982bc062
   $w$cshowsPrec1 ::
+    ChessBoard.GameOver -> GHC.Base.String -> GHC.Base.String
+  {- Arity: 2, Strictness: <S,1*U><L,1*U>, Inline: [2],
+     Unfolding: (\ (w :: ChessBoard.GameOver) (w1 :: GHC.Base.String) ->
+                 case w of wild {
+                   ChessBoard.CheckMate
+                   -> GHC.Base.++ @ GHC.Types.Char ChessBoard.$fShowGameOver5 w1
+                   ChessBoard.StaleMate
+                   -> GHC.Base.++ @ GHC.Types.Char ChessBoard.$fShowGameOver3 w1
+                   ChessBoard.Unfinished
+                   -> GHC.Base.++ @ GHC.Types.Char ChessBoard.$fShowGameOver1 w1 }) -}
+e5987e4d79a55bc89f789668aac5378c
+  $w$cshowsPrec2 ::
     GHC.Prim.Int#
     -> ChessBoard.RowLoc -> GHC.Base.String -> [GHC.Types.Char]
   {- Arity: 3, Strictness: <S,1*U><L,1*U(U)><L,1*U>, Inline: [2],
@@ -1289,8 +1488,8 @@ a9339aa10bc82e16fb147d7654bbb4ff
                            ww3
                            (GHC.Types.[] @ GHC.Types.Char) of ww4 { (#,#) ww5 ww6 ->
                     GHC.Base.++_$s++ @ GHC.Types.Char w ww5 ww6 } })) -}
-1e0daec0126cf9e1bd4d8702eb8aea12
-  $w$cshowsPrec2 ::
+8df659431a2d2f666d3b2611118c9933
+  $w$cshowsPrec3 ::
     GHC.Prim.Int#
     -> GHC.Base.String
     -> ChessBoard.Color
@@ -1493,6 +1692,23 @@ d3cd3337d4f5f7d4fa2f0013a4e22b3c
                              1# -> GHC.Maybe.Nothing @ ChessBoard.Piece } }
                         1# -> GHC.Maybe.Nothing @ ChessBoard.Piece }
                    1# -> GHC.Maybe.Nothing @ ChessBoard.Piece }) -}
+18958cfe00cab08202bd736d6db7a04e
+  $wcycleBoardCheck ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> GHC.Prim.Int#
+    -> GHC.Prim.Int#
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <L,1*U(U,A,A)><L,U><S,U><S,U>,
+     Inline: [2] -}
+60d0584fe3e9afd432bedb5893657517
+  $wcycleMoveCheck ::
+    ChessBoard.Board
+    -> ChessBoard.Color
+    -> GHC.Prim.Int#
+    -> GHC.Prim.Int#
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <S,U><L,U><S,U><S,U>, Inline: [2] -}
 ecd1acda97dc24efa04311059873ddd0
   $wfirstPiece ::
     ChessBoard.Direction
@@ -1501,7 +1717,7 @@ ecd1acda97dc24efa04311059873ddd0
     -> ChessBoard.Board
     -> GHC.Maybe.Maybe ChessBoard.Piece
   {- Arity: 4, Strictness: <L,U><S,U><L,1*U(U)><L,U>, Inline: [2] -}
-29912fc0b71dc86907ad909f1e2d80e4
+d3e3318effe9324496b7a12c521732ac
   $wgetKingInBoard ::
     ChessBoard.Board
     -> ChessBoard.Color
@@ -1509,6 +1725,173 @@ ecd1acda97dc24efa04311059873ddd0
     -> GHC.Prim.Int#
     -> GHC.Maybe.Maybe ChessBoard.Location
   {- Arity: 4, Strictness: <S,U><L,U><S,1*U><S,U>, Inline: [2] -}
+bd4dfaa584b1b6cbc7be5503ff7274fe
+  $wisAnyBishopMove ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> GHC.Prim.Int#
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <L,U(U,A,A)><L,U><S,U><L,U(U)>,
+     Inline: [2],
+     Unfolding: (\ (w :: ChessBoard.Game)
+                   (w1 :: ChessBoard.Color)
+                   (ww :: GHC.Prim.Int#)
+                   (w2 :: ChessBoard.RowLoc) ->
+                 let {
+                   col :: ChessBoard.ColLoc = GHC.Types.I# ww
+                 } in
+                 case ChessBoard.$wisAnyMoveRecurse
+                        w
+                        w1
+                        col
+                        w2
+                        (GHC.Prim.+# ww 1#)
+                        (case w2 of wild { GHC.Types.I# x2 ->
+                         GHC.Types.I# (GHC.Prim.+# x2 1#) })
+                        ChessBoard.DiagFR of wild {
+                   GHC.Types.False
+                   -> case ChessBoard.$wisAnyMoveRecurse
+                             w
+                             w1
+                             col
+                             w2
+                             (GHC.Prim.-# ww 1#)
+                             (case w2 of wild1 { GHC.Types.I# x2 ->
+                              GHC.Types.I# (GHC.Prim.+# x2 1#) })
+                             ChessBoard.DiagFL of wild1 {
+                        GHC.Types.False
+                        -> case ChessBoard.$wisAnyMoveRecurse
+                                  w
+                                  w1
+                                  col
+                                  w2
+                                  (GHC.Prim.+# ww 1#)
+                                  (case w2 of wild2 { GHC.Types.I# x2 ->
+                                   GHC.Types.I# (GHC.Prim.-# x2 1#) })
+                                  ChessBoard.DiagBR of wild2 {
+                             GHC.Types.False
+                             -> ChessBoard.$wisAnyMoveRecurse
+                                  w
+                                  w1
+                                  col
+                                  w2
+                                  (GHC.Prim.-# ww 1#)
+                                  (case w2 of wild3 { GHC.Types.I# x2 ->
+                                   GHC.Types.I# (GHC.Prim.-# x2 1#) })
+                                  ChessBoard.DiagBL
+                             GHC.Types.True -> GHC.Types.True }
+                        GHC.Types.True -> GHC.Types.True }
+                   GHC.Types.True -> GHC.Types.True }) -}
+41ce079dc4753f39d00a773cce8a4bce
+  $wisAnyKingMove ::
+    ChessBoard.Board
+    -> ChessBoard.Color
+    -> GHC.Prim.Int#
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <L,U><L,U><S,U><L,U(U)>, Inline: [2] -}
+e5518e35dbfad9693dd250e6ba63f178
+  $wisAnyKnightMove ::
+    ChessBoard.Board
+    -> ChessBoard.Color
+    -> GHC.Prim.Int#
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <L,U><L,U><S,U><L,U(U)>, Inline: [2] -}
+1d27536b7d7b8d14a13fb8649031bb4d
+  $wisAnyMoveRecurse ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> ChessBoard.ColLoc
+    -> ChessBoard.RowLoc
+    -> GHC.Prim.Int#
+    -> ChessBoard.RowLoc
+    -> ChessBoard.Direction
+    -> GHC.Types.Bool
+  {- Arity: 7,
+     Strictness: <L,1*U(U,A,A)><L,U><L,1*U(U)><L,U(U)><S,U><L,1*U(U)><L,U>,
+     Inline: [2] -}
+2970e88b3c82eb233a5bf56dfa9c63cd
+  $wisAnyPawnMove ::
+    ChessBoard.Board
+    -> ChessBoard.Color
+    -> GHC.Prim.Int#
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <L,U><L,U><S,U><L,U(U)>, Inline: [2] -}
+ee0b2e5420cc211462c6dd96fbae64ff
+  $wisAnyQueenMove ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> GHC.Prim.Int#
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <L,U(U,A,A)><L,U><S,U><L,U(U)>,
+     Inline: [2],
+     Unfolding: (\ (w :: ChessBoard.Game)
+                   (w1 :: ChessBoard.Color)
+                   (ww :: GHC.Prim.Int#)
+                   (w2 :: ChessBoard.RowLoc) ->
+                 case ChessBoard.$wisAnyBishopMove w w1 ww w2 of wild {
+                   GHC.Types.False -> ChessBoard.$wisAnyRookMove w w1 ww w2
+                   GHC.Types.True -> GHC.Types.True }) -}
+4096873429dbeda41f427d945de7599c
+  $wisAnyRookMove ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> GHC.Prim.Int#
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <L,U(U,A,A)><L,U><S,U><L,U(U)>,
+     Inline: [2],
+     Unfolding: (\ (w :: ChessBoard.Game)
+                   (w1 :: ChessBoard.Color)
+                   (ww :: GHC.Prim.Int#)
+                   (w2 :: ChessBoard.RowLoc) ->
+                 let {
+                   col :: ChessBoard.ColLoc = GHC.Types.I# ww
+                 } in
+                 case ChessBoard.$wisAnyMoveRecurse
+                        w
+                        w1
+                        col
+                        w2
+                        ww
+                        (case w2 of wild { GHC.Types.I# x2 ->
+                         GHC.Types.I# (GHC.Prim.+# x2 1#) })
+                        ChessBoard.Forward of wild {
+                   GHC.Types.False
+                   -> case ChessBoard.$wisAnyMoveRecurse
+                             w
+                             w1
+                             col
+                             w2
+                             ww
+                             (case w2 of wild1 { GHC.Types.I# x2 ->
+                              GHC.Types.I# (GHC.Prim.-# x2 1#) })
+                             ChessBoard.Backward of wild1 {
+                        GHC.Types.False
+                        -> case ChessBoard.$wisAnyMoveRecurse
+                                  w
+                                  w1
+                                  col
+                                  w2
+                                  (GHC.Prim.-# ww 1#)
+                                  w2
+                                  ChessBoard.Leftt of wild2 {
+                             GHC.Types.False
+                             -> ChessBoard.$wisAnyMoveRecurse
+                                  w
+                                  w1
+                                  col
+                                  w2
+                                  (GHC.Prim.+# ww 1#)
+                                  w2
+                                  ChessBoard.Rightt
+                             GHC.Types.True -> GHC.Types.True }
+                        GHC.Types.True -> GHC.Types.True }
+                   GHC.Types.True -> GHC.Types.True }) -}
 ec223651cf9ed3775f3df41f34e647cb
   $wisClearPath ::
     GHC.Prim.Int#
@@ -1518,6 +1901,27 @@ ec223651cf9ed3775f3df41f34e647cb
     -> ChessBoard.Board
     -> GHC.Types.Bool
   {- Arity: 5, Strictness: <S,U><S,U><S,U><S,U><L,U>, Inline: [2] -}
+463b5e8f0ed142f2ff246fcedab238f9
+  $wisGameOver ::
+    ChessBoard.Board -> ChessBoard.Color -> ChessBoard.GameOver
+  {- Arity: 2, Strictness: <S,U><L,U>, Inline: [2],
+     Unfolding: (\ (ww :: ChessBoard.Board) (w :: ChessBoard.Color) ->
+                 let {
+                   wild :: ChessBoard.Game
+                   = ChessBoard.Game ww ChessBoard.isGameOver1 ChessBoard.isGameOver1
+                 } in
+                 let {
+                   $j :: ChessBoard.GameOver <join 0>
+                   = case ChessBoard.$wcycleBoardCheck wild w 0# 0# of wild1 {
+                       GHC.Types.False -> ChessBoard.StaleMate
+                       GHC.Types.True -> ChessBoard.Unfinished }
+                 } in
+                 case ChessBoard.isKingInCheck ww w of wild1 {
+                   GHC.Types.False -> $j
+                   GHC.Types.True
+                   -> case ChessBoard.$wcycleBoardCheck wild w 0# 0# of wild2 {
+                        GHC.Types.False -> ChessBoard.CheckMate
+                        GHC.Types.True -> $j } }) -}
 cf58d13dfd6651e7743db6b1c32f7b7a
   $wisOpen ::
     GHC.Prim.Int#
@@ -1686,7 +2090,7 @@ aef732ff49b7b1820fe3932b0a956791
                       case ww of wild1 { GHC.Types.I# y ->
                       case GHC.Prim.==# x2 y of lwild1 {
                         DEFAULT -> $j 1# -> GHC.Types.False } } } }) -}
-bdd584b5943092816703b79212abe1f7
+56ad51e6b198cc8831f10bd2cc60d369
   $wisValidMove ::
     GHC.Maybe.Maybe ChessBoard.Piece
     -> ChessBoard.Location
@@ -1889,102 +2293,170 @@ d6338b5034f233b1ace2592a23b6dc34
                    1#
                    -> case GHC.Prim.==# ww2 ww of lwild1 {
                         DEFAULT -> $j 1# -> GHC.Types.False } }) -}
-a2fcbfe69158384afe876a112609e616
+c0fe0025d0af3915167da3052971a5fb
   $wisValidPlayerMove ::
     ChessBoard.Board
     -> GHC.Prim.Int#
-    -> GHC.Prim.Int#
-    -> ChessBoard.Location
+    -> ChessBoard.RowLoc
+    -> ChessBoard.ColLoc
+    -> ChessBoard.RowLoc
     -> ChessBoard.Color
     -> (# GHC.Types.Bool, GHC.Maybe.Maybe GHC.Base.String #)
-  {- Arity: 5, Strictness: <S,U><S,U><S,U><L,U(U(U),U(U))><L,U>,
+  {- Arity: 6,
+     Strictness: <L,U><S,U><L,1*U(U)><L,1*U(U)><L,1*U(U)><L,U>,
      Inline: [2],
      Unfolding: (\ (ww :: ChessBoard.Board)
                    (ww1 :: GHC.Prim.Int#)
-                   (ww2 :: GHC.Prim.Int#)
-                   (w :: ChessBoard.Location)
-                   (w1 :: ChessBoard.Color) ->
-                 case GHC.List.$w!!
-                        @ (GHC.Maybe.Maybe ChessBoard.Piece)
-                        (GHC.List.$w!! @ ChessBoard.Row ww ww2)
-                        ww1 of wild {
-                   GHC.Maybe.Nothing
-                   -> (# GHC.Types.False, ChessBoard.isValidPlayerMove4 #)
-                   GHC.Maybe.Just ipv
-                   -> let {
-                        $j :: (# GHC.Types.Bool, GHC.Maybe.Maybe GHC.Base.String #)
-                          <join 0>
-                        = let {
-                            cs :: ChessBoard.ColLoc = GHC.Types.I# ww1
-                          } in
-                          case ChessBoard.$wisValidMove
-                                 wild
-                                 (ChessBoard.Location cs (GHC.Types.I# ww2))
-                                 w
-                                 ww of ww3 { (#,#) ww4 ww5 ->
-                          case ww4 of wild1 {
-                            GHC.Types.False -> ww3
-                            GHC.Types.True
-                            -> case w of ww6 { ChessBoard.Location ww7 ww8 ->
-                               case ww7 of ww9 { GHC.Types.I# ww10 ->
-                               case ww8 of ww11 { GHC.Types.I# ww12 ->
-                               case GHC.List.$w!!
-                                      @ (GHC.Maybe.Maybe ChessBoard.Piece)
-                                      (GHC.List.$w!! @ ChessBoard.Row ww ww12)
-                                      ww10 of wild2 {
-                                 GHC.Maybe.Nothing
-                                 -> case ChessBoard.isKingInCheck
-                                           (ChessBoard.$wchangeBoard
-                                              (ChessBoard.$wchangeBoard
-                                                 ww
-                                                 (GHC.Maybe.Nothing @ ChessBoard.Piece)
-                                                 cs
-                                                 ww2)
-                                              (GHC.List.$w!!
-                                                 @ (GHC.Maybe.Maybe ChessBoard.Piece)
-                                                 (GHC.List.$w!! @ ChessBoard.Row ww ww2)
-                                                 ww1)
-                                              (GHC.Types.I# ww10)
-                                              ww12)
-                                           w1 of wild3 {
-                                      GHC.Types.False
-                                      -> (# GHC.Types.True, GHC.Maybe.Nothing @ GHC.Base.String #)
-                                      GHC.Types.True
-                                      -> (# GHC.Types.False, ChessBoard.isValidPlayerMove1 #) }
-                                 GHC.Maybe.Just a1
-                                 -> case ChessBoard.isKingInCheck
-                                           (ChessBoard.$wchangeBoard
-                                              (ChessBoard.$wchangeBoard
-                                                 ww
-                                                 (GHC.Maybe.Nothing @ ChessBoard.Piece)
-                                                 cs
-                                                 ww2)
-                                              (GHC.List.$w!!
-                                                 @ (GHC.Maybe.Maybe ChessBoard.Piece)
-                                                 (GHC.List.$w!! @ ChessBoard.Row ww ww2)
-                                                 ww1)
-                                              (GHC.Types.I# ww10)
-                                              ww12)
-                                           w1 of wild3 {
-                                      GHC.Types.False
-                                      -> (# GHC.Types.True, GHC.Maybe.Nothing @ GHC.Base.String #)
-                                      GHC.Types.True
-                                      -> (# GHC.Types.False,
-                                            ChessBoard.isValidPlayerMove1 #) } } } } } } }
-                      } in
-                      case w1 of wild1 {
-                        ChessBoard.Black
-                        -> case ipv of wild2 { ChessBoard.Piece ds ds1 ->
-                           case ds of wild3 {
-                             ChessBoard.Black -> $j
-                             ChessBoard.White
-                             -> (# GHC.Types.False, ChessBoard.isValidPlayerMove4 #) } }
-                        ChessBoard.White
-                        -> case ipv of wild2 { ChessBoard.Piece ds ds1 ->
-                           case ds of wild3 {
-                             ChessBoard.Black
-                             -> (# GHC.Types.False, ChessBoard.isValidPlayerMove4 #)
-                             ChessBoard.White -> $j } } } }) -}
+                   (ww2 :: ChessBoard.RowLoc)
+                   (ww3 :: ChessBoard.ColLoc)
+                   (ww4 :: ChessBoard.RowLoc)
+                   (w :: ChessBoard.Color) ->
+                 case GHC.Prim.># ww1 7# of lwild {
+                   DEFAULT
+                   -> case ww2 of wild { GHC.Types.I# x2 ->
+                      case GHC.Prim.># x2 7# of lwild1 {
+                        DEFAULT
+                        -> case GHC.Prim.<# ww1 0# of lwild2 {
+                             DEFAULT
+                             -> case GHC.Prim.<# x2 0# of lwild3 {
+                                  DEFAULT
+                                  -> case ww3 of wild1 { GHC.Types.I# x3 ->
+                                     case GHC.Prim.># x3 7# of lwild4 {
+                                       DEFAULT
+                                       -> case ww4 of wild2 { GHC.Types.I# x4 ->
+                                          case GHC.Prim.># x4 7# of lwild5 {
+                                            DEFAULT
+                                            -> case GHC.Prim.<# x3 0# of lwild6 {
+                                                 DEFAULT
+                                                 -> case GHC.Prim.<# x4 0# of lwild7 {
+                                                      DEFAULT
+                                                      -> case GHC.List.$w!!
+                                                                @ (GHC.Maybe.Maybe ChessBoard.Piece)
+                                                                (GHC.List.$w!!
+                                                                   @ ChessBoard.Row
+                                                                   ww
+                                                                   x2)
+                                                                ww1 of wild3 {
+                                                           GHC.Maybe.Nothing
+                                                           -> (# GHC.Types.False,
+                                                                 ChessBoard.isValidPlayerMove10 #)
+                                                           GHC.Maybe.Just ipv
+                                                           -> let {
+                                                                $j :: (# GHC.Types.Bool,
+                                                                         GHC.Maybe.Maybe
+                                                                           GHC.Base.String #)
+                                                                  <join 0>
+                                                                = let {
+                                                                    cs :: ChessBoard.ColLoc
+                                                                    = GHC.Types.I# ww1
+                                                                  } in
+                                                                  case ChessBoard.$wisValidMove
+                                                                         wild3
+                                                                         (ChessBoard.Location
+                                                                            cs
+                                                                            wild)
+                                                                         (ChessBoard.Location
+                                                                            wild1
+                                                                            wild2)
+                                                                         ww of ww5 { (#,#) ww6 ww7 ->
+                                                                  case ww6 of wild4 {
+                                                                    GHC.Types.False -> ww5
+                                                                    GHC.Types.True
+                                                                    -> case GHC.List.$w!!
+                                                                              @ (GHC.Maybe.Maybe
+                                                                                   ChessBoard.Piece)
+                                                                              (GHC.List.$w!!
+                                                                                 @ ChessBoard.Row
+                                                                                 ww
+                                                                                 x4)
+                                                                              x3 of wild5 {
+                                                                         GHC.Maybe.Nothing
+                                                                         -> case ChessBoard.isKingInCheck
+                                                                                   (ChessBoard.$wchangeBoard
+                                                                                      (ChessBoard.$wchangeBoard
+                                                                                         ww
+                                                                                         (GHC.Maybe.Nothing
+                                                                                            @ ChessBoard.Piece)
+                                                                                         cs
+                                                                                         x2)
+                                                                                      (GHC.List.$w!!
+                                                                                         @ (GHC.Maybe.Maybe
+                                                                                              ChessBoard.Piece)
+                                                                                         (GHC.List.$w!!
+                                                                                            @ ChessBoard.Row
+                                                                                            ww
+                                                                                            x2)
+                                                                                         ww1)
+                                                                                      (GHC.Types.I#
+                                                                                         x3)
+                                                                                      x4)
+                                                                                   w of wild6 {
+                                                                              GHC.Types.False
+                                                                              -> (# GHC.Types.True,
+                                                                                    GHC.Maybe.Nothing
+                                                                                      @ GHC.Base.String #)
+                                                                              GHC.Types.True
+                                                                              -> (# GHC.Types.False,
+                                                                                    ChessBoard.isValidPlayerMove7 #) }
+                                                                         GHC.Maybe.Just a1
+                                                                         -> case ChessBoard.isKingInCheck
+                                                                                   (ChessBoard.$wchangeBoard
+                                                                                      (ChessBoard.$wchangeBoard
+                                                                                         ww
+                                                                                         (GHC.Maybe.Nothing
+                                                                                            @ ChessBoard.Piece)
+                                                                                         cs
+                                                                                         x2)
+                                                                                      (GHC.List.$w!!
+                                                                                         @ (GHC.Maybe.Maybe
+                                                                                              ChessBoard.Piece)
+                                                                                         (GHC.List.$w!!
+                                                                                            @ ChessBoard.Row
+                                                                                            ww
+                                                                                            x2)
+                                                                                         ww1)
+                                                                                      (GHC.Types.I#
+                                                                                         x3)
+                                                                                      x4)
+                                                                                   w of wild6 {
+                                                                              GHC.Types.False
+                                                                              -> (# GHC.Types.True,
+                                                                                    GHC.Maybe.Nothing
+                                                                                      @ GHC.Base.String #)
+                                                                              GHC.Types.True
+                                                                              -> (# GHC.Types.False,
+                                                                                    ChessBoard.isValidPlayerMove7 #) } } } }
+                                                              } in
+                                                              case w of wild4 {
+                                                                ChessBoard.Black
+                                                                -> case ipv of wild5 { ChessBoard.Piece ds ds1 ->
+                                                                   case ds of wild6 {
+                                                                     ChessBoard.Black -> $j
+                                                                     ChessBoard.White
+                                                                     -> (# GHC.Types.False,
+                                                                           ChessBoard.isValidPlayerMove10 #) } }
+                                                                ChessBoard.White
+                                                                -> case ipv of wild5 { ChessBoard.Piece ds ds1 ->
+                                                                   case ds of wild6 {
+                                                                     ChessBoard.Black
+                                                                     -> (# GHC.Types.False,
+                                                                           ChessBoard.isValidPlayerMove10 #)
+                                                                     ChessBoard.White -> $j } } } }
+                                                      1#
+                                                      -> (# GHC.Types.False,
+                                                            ChessBoard.isValidPlayerMove4 #) }
+                                                 1#
+                                                 -> (# GHC.Types.False,
+                                                       ChessBoard.isValidPlayerMove4 #) }
+                                            1#
+                                            -> (# GHC.Types.False,
+                                                  ChessBoard.isValidPlayerMove4 #) } }
+                                       1#
+                                       -> (# GHC.Types.False, ChessBoard.isValidPlayerMove4 #) } }
+                                  1# -> (# GHC.Types.False, ChessBoard.isValidPlayerMove1 #) }
+                             1# -> (# GHC.Types.False, ChessBoard.isValidPlayerMove1 #) }
+                        1# -> (# GHC.Types.False, ChessBoard.isValidPlayerMove1 #) } }
+                   1# -> (# GHC.Types.False, ChessBoard.isValidPlayerMove1 #) }) -}
 53f28c3411c0061a1a74d1a1a3026bb1
   $wisValidQueenMovement ::
     ChessBoard.ColLoc
@@ -2166,7 +2638,7 @@ c8121ec4c6844a76bc77cca12da2fda5
                         ww5
                         ww6 of ww1 { : ww2 ww3 ->
                  (# ww2, ww3 #) } }) -}
-3652ee39c5d7abfa63db25fa2b4ef9b0
+0e967bd9fdd838310d9c3cc74eb35066
   $wprintScore ::
     GHC.Base.String
     -> ChessBoard.Color
@@ -2294,7 +2766,7 @@ c8121ec4c6844a76bc77cca12da2fda5
                     } in
                     go1 ww3 0#,
                     ww4 #)) -}
-892b46873e19bc8e1f1d5172396421c5
+4b67b52c4c3fa0d35893db32c54e1c52
   $wupdateBoard ::
     ChessBoard.Board
     -> ChessBoard.Location
@@ -2356,18 +2828,20 @@ a9339aa10bc82e16fb147d7654bbb4ff
     | DiagBR
     | DiagFL
     | DiagBL
-14773e2360f5dcedf9831f4d62ce36f1
+7a011c4c9efc3cb6ff7b0b66496d2ceb
   data Game
     = Game {gameBoard :: ChessBoard.Board,
             gamePlayer1 :: ChessBoard.Player,
             gamePlayer2 :: ChessBoard.Player}
-559254018c5392740c2c465834c486b9
+84ebeb4fb08dba347017ed67982bc062
+  data GameOver = CheckMate | StaleMate | Unfinished
+61763d609e56610dc321c7932fa09a95
   data Location = Location ChessBoard.ColLoc ChessBoard.RowLoc
 c96a7f101a22e2b2d8fdf2cc4d7a27a9
   data Piece = Piece ChessBoard.Color ChessBoard.ChessPiece
 fab35df16fb8e21f14678034b5f1d0d5
   type Pieces = [ChessBoard.ChessPiece]
-d6bf4731b011c565064b8deb38b9aa7c
+8e056af4d83966ffb6cca0fdd40d0ace
   data Player
     = Player {name :: GHC.Base.String,
               playerColor :: ChessBoard.Color,
@@ -2378,7 +2852,7 @@ d1d9d77327d3bca4d6ac2ee7b57336fe
   type Row = [GHC.Maybe.Maybe ChessBoard.Piece]
 4914dcb02a6fb8ad0fa41ddf9ab61abf
   type RowLoc = GHC.Types.Int
-d6bf4731b011c565064b8deb38b9aa7c
+8e056af4d83966ffb6cca0fdd40d0ace
   active :: ChessBoard.Player -> ChessBoard.Pieces
   RecSel Left ChessBoard.Player
   {- Arity: 1, HasNoCafRefs, Strictness: <S(LLLSL),1*U(A,A,A,1*U,A)>,
@@ -2442,7 +2916,7 @@ fc2ecab8d55bdf1b8f9223f02ae8b051
                    @ ChessBoard.ChessPiece
                    ChessBoard.Rook
                    (GHC.Types.[] @ ChessBoard.ChessPiece)) -}
-8c5387e43c2181f78bb7df0123f41dd9
+8e237cda1d273d30528e8df95ef36c1d
   blackPlayer :: ChessBoard.Player
   {- Strictness: m,
      Unfolding: (ChessBoard.Player
@@ -2462,7 +2936,7 @@ fc2ecab8d55bdf1b8f9223f02ae8b051
 90df37657349ed2e53d2e56eecb960f5
   blackPlayer3 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("Player 2"#) -}
-d6bf4731b011c565064b8deb38b9aa7c
+8e056af4d83966ffb6cca0fdd40d0ace
   captured :: ChessBoard.Player -> ChessBoard.Pieces
   RecSel Left ChessBoard.Player
   {- Arity: 1, HasNoCafRefs, Strictness: <S(LLSLL),1*U(A,A,1*U,A,A)>,
@@ -2486,7 +2960,7 @@ d6bf4731b011c565064b8deb38b9aa7c
                    (w3 :: ChessBoard.RowLoc) ->
                  case w3 of ww { GHC.Types.I# ww1 ->
                  ChessBoard.$wchangeBoard w w1 w2 ww1 }) -}
-46ad38b45fac6dab4198434ef0011cad
+57f2291bfcedc5f392a508c1b09e5e08
   checkPawnPromotion ::
     ChessBoard.Game
     -> ChessBoard.Location -> ChessBoard.Location -> GHC.Types.Bool
@@ -2528,6 +3002,43 @@ f1b16eb558d343a7d5e47b776da27e74
     ChessBoard.Color -> ChessBoard.ChessPiece -> ChessBoard.Piece
   {- Arity: 2, HasNoCafRefs, Strictness: <L,U><L,U>m,
      Unfolding: InlineRule (0, True, True) ChessBoard.Piece -}
+0e94493b0bcc83243b3a8937bdbacd53
+  cycleBoardCheck ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> ChessBoard.ColLoc
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4,
+     Strictness: <L,1*U(U,A,A)><L,U><S(S),1*U(U)><S(S),1*U(U)>,
+     Inline: [2],
+     Unfolding: InlineRule (4, True, False)
+                (\ (w :: ChessBoard.Game)
+                   (w1 :: ChessBoard.Color)
+                   (w2 :: ChessBoard.ColLoc)
+                   (w3 :: ChessBoard.RowLoc) ->
+                 case w2 of ww { GHC.Types.I# ww1 ->
+                 case w3 of ww2 { GHC.Types.I# ww3 ->
+                 ChessBoard.$wcycleBoardCheck w w1 ww1 ww3 } }) -}
+01ebcef9272ee85faf64e684a5100a79
+  cycleMoveCheck ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> ChessBoard.ColLoc
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4,
+     Strictness: <S(SLL),1*U(U,A,A)><L,U><S(S),1*U(U)><S(S),1*U(U)>,
+     Inline: [2],
+     Unfolding: InlineRule (4, True, False)
+                (\ (w :: ChessBoard.Game)
+                   (w1 :: ChessBoard.Color)
+                   (w2 :: ChessBoard.ColLoc)
+                   (w3 :: ChessBoard.RowLoc) ->
+                 case w of ww { ChessBoard.Game ww1 ww2 ww3 ->
+                 case w2 of ww4 { GHC.Types.I# ww5 ->
+                 case w3 of ww6 { GHC.Types.I# ww7 ->
+                 ChessBoard.$wcycleMoveCheck ww1 w1 ww5 ww7 } } }) -}
 7930796f659c2cd7e0daf85c36b57a16
   emptyRow :: ChessBoard.Row
   {- Unfolding: (case ChessBoard.$wxs1 8# of ww { (#,#) ww1 ww2 ->
@@ -2560,21 +3071,21 @@ ead7c546815ef4c8c806cc864633e6a0
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: ChessBoard.Piece) ->
                  case ds of wild { ChessBoard.Piece color ds1 -> color }) -}
-2053942027000a69a3283603dd2089c6
+9505daac119756ab54015b8a7a5b25aa
   game :: ChessBoard.Game
   {- Strictness: m,
      Unfolding: (ChessBoard.Game
                    ChessBoard.startBoard
                    ChessBoard.whitePlayer
                    ChessBoard.blackPlayer) -}
-14773e2360f5dcedf9831f4d62ce36f1
+7a011c4c9efc3cb6ff7b0b66496d2ceb
   gameBoard :: ChessBoard.Game -> ChessBoard.Board
   RecSel Left ChessBoard.Game
   {- Arity: 1, HasNoCafRefs, Strictness: <S(SLL),1*U(1*U,A,A)>,
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: ChessBoard.Game) ->
                  case ds of wild { ChessBoard.Game ds1 ds2 ds3 -> ds1 }) -}
-14773e2360f5dcedf9831f4d62ce36f1
+7a011c4c9efc3cb6ff7b0b66496d2ceb
   gamePlayer1 :: ChessBoard.Game -> ChessBoard.Player
   RecSel Left ChessBoard.Game
   {- Arity: 1, HasNoCafRefs,
@@ -2582,7 +3093,7 @@ ead7c546815ef4c8c806cc864633e6a0
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: ChessBoard.Game) ->
                  case ds of wild { ChessBoard.Game ds1 ds2 ds3 -> ds2 }) -}
-14773e2360f5dcedf9831f4d62ce36f1
+7a011c4c9efc3cb6ff7b0b66496d2ceb
   gamePlayer2 :: ChessBoard.Game -> ChessBoard.Player
   RecSel Left ChessBoard.Game
   {- Arity: 1, HasNoCafRefs,
@@ -2590,7 +3101,7 @@ ead7c546815ef4c8c806cc864633e6a0
      Unfolding: InlineRule (1, True, False)
                 (\ (ds :: ChessBoard.Game) ->
                  case ds of wild { ChessBoard.Game ds1 ds2 ds3 -> ds3 }) -}
-2aca2b5df8817261487059a0108f60c6
+74887a82e4f729a8aaf8dd43c22a0fb3
   getKingInBoard ::
     ChessBoard.Board
     -> ChessBoard.Color
@@ -2607,7 +3118,7 @@ ead7c546815ef4c8c806cc864633e6a0
                  case w2 of ww { GHC.Types.I# ww1 ->
                  case w3 of ww2 { GHC.Types.I# ww3 ->
                  ChessBoard.$wgetKingInBoard w w1 ww1 ww3 } }) -}
-eb3bac5c580b040a3d55081004fcf025
+6b559fbfd9a5cd55225734ed013db4a0
   getKingLocation ::
     ChessBoard.Board
     -> ChessBoard.Color -> GHC.Maybe.Maybe ChessBoard.Location
@@ -2619,7 +3130,170 @@ eb3bac5c580b040a3d55081004fcf025
                    color
                    ChessBoard.$fShowPlayer2
                    ChessBoard.$fShowPlayer2) -}
-7a6c997978d0d48ecfdefb4899e87979
+d3d26c64bdaaed45360edb4cfd3c1f2f
+  getNextCol ::
+    ChessBoard.ColLoc -> ChessBoard.Direction -> ChessBoard.ColLoc
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U(U)><S,1*U>m,
+     Inline: [2],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: ChessBoard.ColLoc) (w1 :: ChessBoard.Direction) ->
+                 case w of ww { GHC.Types.I# ww1 ->
+                 case w1 of wild {
+                   DEFAULT -> GHC.Types.I# ww1
+                   ChessBoard.Leftt -> GHC.Types.I# (GHC.Prim.-# ww1 1#)
+                   ChessBoard.Rightt -> GHC.Types.I# (GHC.Prim.+# ww1 1#)
+                   ChessBoard.DiagFR -> GHC.Types.I# (GHC.Prim.+# ww1 1#)
+                   ChessBoard.DiagBR -> GHC.Types.I# (GHC.Prim.+# ww1 1#)
+                   ChessBoard.DiagFL -> GHC.Types.I# (GHC.Prim.-# ww1 1#)
+                   ChessBoard.DiagBL -> GHC.Types.I# (GHC.Prim.-# ww1 1#) } }) -}
+d6a0e9185dd8e37b5e8138c394d25ea8
+  getNextRow ::
+    ChessBoard.RowLoc -> ChessBoard.Direction -> ChessBoard.RowLoc
+  {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U(U)><S,1*U>m,
+     Inline: [2],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: ChessBoard.RowLoc) (w1 :: ChessBoard.Direction) ->
+                 case w of ww { GHC.Types.I# ww1 ->
+                 case w1 of wild {
+                   DEFAULT -> GHC.Types.I# (GHC.Prim.+# ww1 1#)
+                   ChessBoard.Backward -> GHC.Types.I# (GHC.Prim.-# ww1 1#)
+                   ChessBoard.Leftt -> GHC.Types.I# ww1
+                   ChessBoard.Rightt -> GHC.Types.I# ww1
+                   ChessBoard.DiagBR -> GHC.Types.I# (GHC.Prim.-# ww1 1#)
+                   ChessBoard.DiagBL -> GHC.Types.I# (GHC.Prim.-# ww1 1#) } }) -}
+838b89a1794db19840c6e5690d0b3708
+  isAnyBishopMove ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> ChessBoard.ColLoc
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <L,U(U,A,A)><L,U><S(S),1*U(U)><L,U(U)>,
+     Inline: [2],
+     Unfolding: InlineRule (4, True, False)
+                (\ (w :: ChessBoard.Game)
+                   (w1 :: ChessBoard.Color)
+                   (w2 :: ChessBoard.ColLoc)
+                   (w3 :: ChessBoard.RowLoc) ->
+                 case w2 of ww { GHC.Types.I# ww1 ->
+                 ChessBoard.$wisAnyBishopMove w w1 ww1 w3 }) -}
+46331419b0e1df68c2bd00bfdfc4fdc3
+  isAnyKingMove ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> ChessBoard.ColLoc
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <S,1*U(U,A,A)><L,U><S(S),1*U(U)><L,U(U)>,
+     Inline: [2],
+     Unfolding: InlineRule (4, True, False)
+                (\ (w :: ChessBoard.Game)
+                   (w1 :: ChessBoard.Color)
+                   (w2 :: ChessBoard.ColLoc)
+                   (w3 :: ChessBoard.RowLoc) ->
+                 case w of ww { ChessBoard.Game ww1 ww2 ww3 ->
+                 case w2 of ww4 { GHC.Types.I# ww5 ->
+                 ChessBoard.$wisAnyKingMove ww1 w1 ww5 w3 } }) -}
+2ad2db7bac0d0bb2d7dbf44ef14704fc
+  isAnyKnightMove ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> ChessBoard.ColLoc
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <S,1*U(U,A,A)><L,U><S(S),1*U(U)><L,U(U)>,
+     Inline: [2],
+     Unfolding: InlineRule (4, True, False)
+                (\ (w :: ChessBoard.Game)
+                   (w1 :: ChessBoard.Color)
+                   (w2 :: ChessBoard.ColLoc)
+                   (w3 :: ChessBoard.RowLoc) ->
+                 case w of ww { ChessBoard.Game ww1 ww2 ww3 ->
+                 case w2 of ww4 { GHC.Types.I# ww5 ->
+                 ChessBoard.$wisAnyKnightMove ww1 w1 ww5 w3 } }) -}
+0a871db9719886dc061b77c4bbb073fd
+  isAnyMove :: ChessBoard.Game -> ChessBoard.Color -> GHC.Types.Bool
+  {- Arity: 2, Strictness: <L,1*U(U,A,A)><L,U>,
+     Unfolding: InlineRule (2, True, False)
+                (\ (gm :: ChessBoard.Game) (color :: ChessBoard.Color) ->
+                 ChessBoard.cycleBoardCheck
+                   gm
+                   color
+                   ChessBoard.$fShowPlayer2
+                   ChessBoard.$fShowPlayer2) -}
+6e9a9ba840c5e9e9d51c68d37d550601
+  isAnyMoveRecurse ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> ChessBoard.ColLoc
+    -> ChessBoard.RowLoc
+    -> ChessBoard.ColLoc
+    -> ChessBoard.RowLoc
+    -> ChessBoard.Direction
+    -> GHC.Types.Bool
+  {- Arity: 7,
+     Strictness: <L,1*U(U,A,A)><L,U><L,1*U(U)><L,U(U)><S(S),1*U(U)><L,1*U(U)><L,U>,
+     Inline: [2],
+     Unfolding: InlineRule (7, True, False)
+                (\ (w :: ChessBoard.Game)
+                   (w1 :: ChessBoard.Color)
+                   (w2 :: ChessBoard.ColLoc)
+                   (w3 :: ChessBoard.RowLoc)
+                   (w4 :: ChessBoard.ColLoc)
+                   (w5 :: ChessBoard.RowLoc)
+                   (w6 :: ChessBoard.Direction) ->
+                 case w4 of ww { GHC.Types.I# ww1 ->
+                 ChessBoard.$wisAnyMoveRecurse w w1 w2 w3 ww1 w5 w6 }) -}
+875149a10d88d8597f48659959bd15e3
+  isAnyPawnMove ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> ChessBoard.ColLoc
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <S,1*U(U,A,A)><L,U><S(S),1*U(U)><L,U(U)>,
+     Inline: [2],
+     Unfolding: InlineRule (4, True, False)
+                (\ (w :: ChessBoard.Game)
+                   (w1 :: ChessBoard.Color)
+                   (w2 :: ChessBoard.ColLoc)
+                   (w3 :: ChessBoard.RowLoc) ->
+                 case w of ww { ChessBoard.Game ww1 ww2 ww3 ->
+                 case w2 of ww4 { GHC.Types.I# ww5 ->
+                 ChessBoard.$wisAnyPawnMove ww1 w1 ww5 w3 } }) -}
+027c90c5b243aa6397c1329c97477f3f
+  isAnyQueenMove ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> ChessBoard.ColLoc
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <L,U(U,A,A)><L,U><S(S),1*U(U)><L,U(U)>,
+     Inline: [2],
+     Unfolding: InlineRule (4, True, False)
+                (\ (w :: ChessBoard.Game)
+                   (w1 :: ChessBoard.Color)
+                   (w2 :: ChessBoard.ColLoc)
+                   (w3 :: ChessBoard.RowLoc) ->
+                 case w2 of ww { GHC.Types.I# ww1 ->
+                 ChessBoard.$wisAnyQueenMove w w1 ww1 w3 }) -}
+9b4d7c864cfb56d1eb2975efa8db35c4
+  isAnyRookMove ::
+    ChessBoard.Game
+    -> ChessBoard.Color
+    -> ChessBoard.ColLoc
+    -> ChessBoard.RowLoc
+    -> GHC.Types.Bool
+  {- Arity: 4, Strictness: <L,U(U,A,A)><L,U><S(S),1*U(U)><L,U(U)>,
+     Inline: [2],
+     Unfolding: InlineRule (4, True, False)
+                (\ (w :: ChessBoard.Game)
+                   (w1 :: ChessBoard.Color)
+                   (w2 :: ChessBoard.ColLoc)
+                   (w3 :: ChessBoard.RowLoc) ->
+                 case w2 of ww { GHC.Types.I# ww1 ->
+                 ChessBoard.$wisAnyRookMove w w1 ww1 w3 }) -}
+4c9d76c38c4c171188f85b094993a9f4
   isClearPath ::
     ChessBoard.Location
     -> ChessBoard.Location -> ChessBoard.Board -> GHC.Types.Bool
@@ -2650,7 +3324,23 @@ eb3bac5c580b040a3d55081004fcf025
                    GHC.Maybe.Just ds2
                    -> case ds2 of wild1 { ChessBoard.Piece enemyColor ds3 ->
                       ChessBoard.$fEqColor_$c/= ds enemyColor } }) -}
-9d1ada50281bb2995139fcceaecfe12d
+eaeb8ae20141c59f190bbacfca7eebaf
+  isGameOver ::
+    ChessBoard.Game -> ChessBoard.Color -> ChessBoard.GameOver
+  {- Arity: 2, Strictness: <S(SLL),1*U(U,A,A)><L,U>, Inline: [2],
+     Unfolding: InlineRule (2, True, False)
+                (\ (w :: ChessBoard.Game) (w1 :: ChessBoard.Color) ->
+                 case w of ww { ChessBoard.Game ww1 ww2 ww3 ->
+                 ChessBoard.$wisGameOver ww1 w1 }) -}
+e0d5ead2f76121dfc0bfb008656e887d
+  isGameOver1 :: ChessBoard.Player
+  {- Unfolding: (Control.Exception.Base.absentError
+                   @ ChessBoard.Player
+                   ChessBoard.isGameOver2) -}
+7f8e315ab1573ce95f4edd640f16b7fd
+  isGameOver2 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("ww Player"#) -}
+e0fc2359cd374be59d4683994dfa6014
   isKingInCheck ::
     ChessBoard.Board -> ChessBoard.Color -> GHC.Types.Bool
   {- Arity: 2, Strictness: <S,U><L,U>,
@@ -2678,32 +3368,32 @@ eb3bac5c580b040a3d55081004fcf025
                              GHC.Types.True -> GHC.Types.True }
                         GHC.Types.True -> GHC.Types.True }
                    GHC.Types.True -> GHC.Types.True }) -}
-56a710220fef59238fb844550e379fa7
+7a4587cd156d51950157b718cf44d8ca
   isKingInDiagCheck ::
     GHC.Maybe.Maybe ChessBoard.Location
     -> ChessBoard.Color -> ChessBoard.Board -> GHC.Types.Bool
   {- Arity: 3, Strictness: <S,1*U><L,U><L,U> -}
-1a749642d1e184c8ac20c0c01f408f80
+8df55979d4920be316c3f64833e15085
   isKingInKingCheck ::
     GHC.Maybe.Maybe ChessBoard.Location
     -> ChessBoard.Color -> ChessBoard.Board -> GHC.Types.Bool
   {- Arity: 3, Strictness: <S,1*U><L,U><L,U> -}
-7c3325bfd687df01c7bccd43761336a5
+37930218ab3b60b8d2a7cd3d5b67b3b7
   isKingInKnightCheck ::
     GHC.Maybe.Maybe ChessBoard.Location
     -> ChessBoard.Color -> ChessBoard.Board -> GHC.Types.Bool
   {- Arity: 3, Strictness: <S,1*U><L,U><L,U> -}
-fa38644a7c32bccd411f9f11e4c76ab3
+8ce412682e05e98f47a84f043b6317a3
   isKingInPawnCheck ::
     GHC.Maybe.Maybe ChessBoard.Location
     -> ChessBoard.Color -> ChessBoard.Board -> GHC.Types.Bool
   {- Arity: 3, Strictness: <S,1*U><L,1*U><L,U> -}
-ff28bf938b67d658b089f78403ffa7ca
+de21611eb4997092a58ded9694d31752
   isKingInStraightCheck ::
     GHC.Maybe.Maybe ChessBoard.Location
     -> ChessBoard.Color -> ChessBoard.Board -> GHC.Types.Bool
   {- Arity: 3, Strictness: <S,1*U><L,U><L,U> -}
-0d793e1ee8698c7c3957919bda19dfba
+c5fbf661e38233edf262ad17bfc6c28c
   isKingLeftInCheck ::
     ChessBoard.Board
     -> ChessBoard.Location
@@ -2719,7 +3409,7 @@ ff28bf938b67d658b089f78403ffa7ca
                    (turnColor :: ChessBoard.Color) ->
                  case ChessBoard.updateBoard board ls le of wild { (,) x2 ds1 ->
                  ChessBoard.isKingInCheck x2 turnColor }) -}
-60d961f2018a0982fbbb436798ad06a3
+2ce39f9b970fd94e223be9f6a487a04d
   isOpen :: ChessBoard.Location -> ChessBoard.Board -> GHC.Types.Bool
   {- Arity: 2, Strictness: <S(S(S)S(S)),1*U(1*U(U),1*U(U))><S,1*U>,
      Inline: [2],
@@ -2729,7 +3419,7 @@ ff28bf938b67d658b089f78403ffa7ca
                  case ww1 of ww3 { GHC.Types.I# ww4 ->
                  case ww2 of ww5 { GHC.Types.I# ww6 ->
                  ChessBoard.$wisOpen ww4 ww6 w1 } } }) -}
-c9b1db5b508ae973939f05207a29987f
+0565781b4506b4ae6844a79efed3e46e
   isValidBishopMove ::
     ChessBoard.Piece
     -> ChessBoard.Location
@@ -2827,7 +3517,7 @@ a97fa64fc73172f1e4e58501bbbb1546
 f6802b2985120708884f1928a20e1dfa
   isValidBishopMove9 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("Invalid bishop movement!"#) -}
-d07c55f0fa449a4fcecf57973d99619f
+c00f65d60dac9d606189cb1dd2a0c582
   isValidBishopMovement ::
     ChessBoard.Location -> ChessBoard.Location -> GHC.Types.Bool
   {- Arity: 2, HasNoCafRefs,
@@ -2846,7 +3536,7 @@ d07c55f0fa449a4fcecf57973d99619f
                    ww6
                    ww11
                    ww13 } } } } } }) -}
-67f814df0d1937ce40d83b2a3f770560
+319d71074ba7a21d22dc2356b1088230
   isValidKingMove ::
     ChessBoard.Piece
     -> ChessBoard.Location
@@ -2913,7 +3603,7 @@ d07c55f0fa449a4fcecf57973d99619f
 4b301e03fba4a065ac8f9f2904c4c46d
   isValidKingMove3 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("Invalid king movement!"#) -}
-6aaaee68131ceafd074efa07320bcb64
+3ef8bbd2d6476991c504d257899b074d
   isValidKingMovement ::
     ChessBoard.Location -> ChessBoard.Location -> GHC.Types.Bool
   {- Arity: 2, HasNoCafRefs,
@@ -2928,7 +3618,7 @@ d07c55f0fa449a4fcecf57973d99619f
                  case ww8 of ww10 { GHC.Types.I# ww11 ->
                  case ww9 of ww12 { GHC.Types.I# ww13 ->
                  ChessBoard.$wisValidKingMovement ww4 ww6 ww11 ww13 } } } } } }) -}
-4db08737d4463236dc3fd0a2ea5b1f66
+46d48ed1ab93e3b2ef1d2ce678d0ba40
   isValidKnightMove ::
     ChessBoard.Piece
     -> ChessBoard.Location
@@ -2994,7 +3684,7 @@ cdb33a54e1e6f1221663094fa85aab51
 fd83a6175072c92b7967a0188ee5f485
   isValidKnightMove3 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("Invalid knight movement!"#) -}
-a0d9a835cb89fee9bba406594b5c2f9a
+3a5da5b76a45b23239c0b554ffb17784
   isValidKnightMovement ::
     ChessBoard.Location -> ChessBoard.Location -> GHC.Types.Bool
   {- Arity: 2, HasNoCafRefs,
@@ -3007,7 +3697,7 @@ a0d9a835cb89fee9bba406594b5c2f9a
                  case w1 of ww5 { ChessBoard.Location ww6 ww7 ->
                  case ww7 of ww8 { GHC.Types.I# ww9 ->
                  ChessBoard.$wisValidKnightMovement ww1 ww4 ww6 ww9 } } } }) -}
-8a46b03f074823f2a1a556580c7d4028
+c101d00aa0d44678a420e5ab3c1f3944
   isValidMove ::
     GHC.Maybe.Maybe ChessBoard.Piece
     -> ChessBoard.Location
@@ -3045,7 +3735,7 @@ b51c799a39ae66096ff217d2e76326e7
                            case ds2 of wild3 {
                              ChessBoard.Black -> GHC.Types.False
                              ChessBoard.White -> GHC.Types.True } } } }) -}
-878c39446b6377bed777d268ad9f01f9
+5c00632c04314172bd41db686686e78c
   isValidMovement ::
     ChessBoard.Piece
     -> ChessBoard.Location -> ChessBoard.Location -> GHC.Types.Bool
@@ -3062,7 +3752,7 @@ b51c799a39ae66096ff217d2e76326e7
                  case w2 of ww8 { ChessBoard.Location ww9 ww10 ->
                  case ww10 of ww11 { GHC.Types.I# ww12 ->
                  ChessBoard.$wisValidMovement ww1 ww2 ww4 ww7 ww9 ww12 } } } } }) -}
-7a2de2c4bcd4ffee08bf04e503ae0483
+680dc5043b6616b5acfce6a7a89c0bf0
   isValidMovementPiece ::
     ChessBoard.Piece
     -> ChessBoard.Location -> ChessBoard.Location -> GHC.Types.Bool
@@ -3077,7 +3767,7 @@ b51c799a39ae66096ff217d2e76326e7
                  case ww1 of ww3 { GHC.Types.I# ww4 ->
                  case w2 of ww5 { ChessBoard.Location ww6 ww7 ->
                  ChessBoard.$wisValidMovementPiece w ww4 ww2 ww6 ww7 } } }) -}
-3e36b89142d2aab7ff3892f2e16e9a29
+e450c53a05c6665914ed891d507be701
   isValidPawnAttack ::
     ChessBoard.Color
     -> ChessBoard.Location
@@ -3097,7 +3787,7 @@ b51c799a39ae66096ff217d2e76326e7
                  case w2 of ww5 { ChessBoard.Location ww6 ww7 ->
                  case ww6 of ww8 { GHC.Types.I# ww9 ->
                  ChessBoard.$wisValidPawnAttack w ww4 ww2 ww9 ww7 w3 } } } }) -}
-27d6cce2edc6157edbc934f7cfcda18f
+dbf7bb99bee99e6e5000ce29e53106bb
   isValidPawnMove ::
     ChessBoard.Piece
     -> ChessBoard.Location
@@ -3176,7 +3866,7 @@ c1c05996bdb88a375c2610a94003aaa9
 3c256e57ba35df0b6a95ec307798e863
   isValidPawnMove6 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("Invalid pawn movement!"#) -}
-e13b442005272ebaed27df3106788be3
+af2392590afafbd06cf008114266801d
   isValidPawnMovement ::
     ChessBoard.Color
     -> ChessBoard.Location -> ChessBoard.Location -> GHC.Types.Bool
@@ -3199,7 +3889,7 @@ e13b442005272ebaed27df3106788be3
                    ww6
                    ww11
                    ww13 } } } } } }) -}
-85deca2b8390e157440c6c8db086da77
+1b6273c7a7a1d987a2919aa57175e2cb
   isValidPlayerMove ::
     ChessBoard.Game
     -> ChessBoard.Location
@@ -3207,7 +3897,7 @@ e13b442005272ebaed27df3106788be3
     -> ChessBoard.Color
     -> (GHC.Types.Bool, GHC.Maybe.Maybe GHC.Base.String)
   {- Arity: 4,
-     Strictness: <S(SLL),1*U(U,A,A)><S(S(S)S(S)),1*U(1*U(U),1*U(U))><L,U(U(U),U(U))><L,U>m,
+     Strictness: <S,1*U(U,A,A)><S(S(S)L),1*U(1*U(U),1*U(U))><S,1*U(1*U(U),1*U(U))><L,U>m,
      Inline: [2],
      Unfolding: InlineRule (4, True, False)
                 (\ (w :: ChessBoard.Game)
@@ -3217,41 +3907,68 @@ e13b442005272ebaed27df3106788be3
                  case w of ww { ChessBoard.Game ww1 ww2 ww3 ->
                  case w1 of ww4 { ChessBoard.Location ww5 ww6 ->
                  case ww5 of ww7 { GHC.Types.I# ww8 ->
-                 case ww6 of ww9 { GHC.Types.I# ww10 ->
+                 case w2 of ww9 { ChessBoard.Location ww10 ww11 ->
                  case ChessBoard.$wisValidPlayerMove
                         ww1
                         ww8
+                        ww6
                         ww10
-                        w2
-                        w3 of ww11 { (#,#) ww12 ww13 ->
-                 (ww12, ww13) } } } } }) -}
-874a8b9ac3cdcb7f7771cc8968ed0640
+                        ww11
+                        w3 of ww12 { (#,#) ww13 ww14 ->
+                 (ww13, ww14) } } } } }) -}
+2f6d4fe241a13f78d2cc115de3ac034f
   isValidPlayerMove1 :: GHC.Maybe.Maybe [GHC.Types.Char]
   {- Strictness: m2,
      Unfolding: (GHC.Maybe.Just
                    @ [GHC.Types.Char]
                    ChessBoard.isValidPlayerMove2) -}
-ce29832d67e3ea463d24205095700b34
+5e1309924ce9a71fdaf0dbf198293e09
+  isValidPlayerMove10 :: GHC.Maybe.Maybe [GHC.Types.Char]
+  {- Strictness: m2,
+     Unfolding: (GHC.Maybe.Just
+                   @ [GHC.Types.Char]
+                   ChessBoard.isValidPlayerMove11) -}
+237724a4220f363d3587c7b8c6ac45fa
+  isValidPlayerMove11 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString#
+                   ChessBoard.isValidPlayerMove12) -}
+c88e1882a8c6a30bafda00b3d36ee8cb
+  isValidPlayerMove12 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("Not your piece!"#) -}
+c203c0cc8cc3038f66a1beecf5d1a63a
   isValidPlayerMove2 :: [GHC.Types.Char]
   {- Unfolding: (GHC.CString.unpackCString#
                    ChessBoard.isValidPlayerMove3) -}
-16155a6f866626417457b0fcce45bf36
+435a6edf2aed94ea25ea46d9c91d8081
   isValidPlayerMove3 :: GHC.Prim.Addr#
-  {- HasNoCafRefs, Unfolding: ("Your King is left in Check!"#) -}
-e7b9c3bc11f38f4909f9f14f8daab589
+  {- HasNoCafRefs, Unfolding: ("Invalid starting position"#) -}
+c8f9d15740e4c9255bd649c853de5932
   isValidPlayerMove4 :: GHC.Maybe.Maybe [GHC.Types.Char]
   {- Strictness: m2,
      Unfolding: (GHC.Maybe.Just
                    @ [GHC.Types.Char]
                    ChessBoard.isValidPlayerMove5) -}
-9d8743911252afb2409b2e96a9f2ec24
+1520bb50d7c7daac37e5a5920f9ce53b
   isValidPlayerMove5 :: [GHC.Types.Char]
   {- Unfolding: (GHC.CString.unpackCString#
                    ChessBoard.isValidPlayerMove6) -}
-931edc060213ef8d96c95ad7eceab1d7
+26abc1b442d88bae78b804d4c3352807
   isValidPlayerMove6 :: GHC.Prim.Addr#
-  {- HasNoCafRefs, Unfolding: ("Not your piece!"#) -}
-58af3a02e0dd89eb1b1321137813a94e
+  {- HasNoCafRefs, Unfolding: ("Invalid ending position"#) -}
+ac999bfcd9c1fb60675de761e416ccc6
+  isValidPlayerMove7 :: GHC.Maybe.Maybe [GHC.Types.Char]
+  {- Strictness: m2,
+     Unfolding: (GHC.Maybe.Just
+                   @ [GHC.Types.Char]
+                   ChessBoard.isValidPlayerMove8) -}
+84c5b7261e1dd77b01d714e3827ceb69
+  isValidPlayerMove8 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString#
+                   ChessBoard.isValidPlayerMove9) -}
+e75516c341f8a51b87a22876fe58a1b7
+  isValidPlayerMove9 :: GHC.Prim.Addr#
+  {- HasNoCafRefs, Unfolding: ("Your King is left in Check!"#) -}
+b00681114cdc1168e30ac3a178a15cec
   isValidQueenMove ::
     ChessBoard.Piece
     -> ChessBoard.Location
@@ -3322,7 +4039,7 @@ e7b9c3bc11f38f4909f9f14f8daab589
 87fabd1ac7997565dec2267d603e83b4
   isValidQueenMove3 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("Invalid Queen movement!"#) -}
-21510135c92dff7b3ca521e55101cd93
+5dac95d48cd9db5916a7ad30b843295e
   isValidQueenMovement ::
     ChessBoard.Location -> ChessBoard.Location -> GHC.Types.Bool
   {- Arity: 2, HasNoCafRefs,
@@ -3335,7 +4052,7 @@ e7b9c3bc11f38f4909f9f14f8daab589
                  case w1 of ww5 { ChessBoard.Location ww6 ww7 ->
                  case ww7 of ww8 { GHC.Types.I# ww9 ->
                  ChessBoard.$wisValidQueenMovement ww1 ww4 ww6 ww9 } } } }) -}
-6f432c9d0e2949c9ee16744c0eb0bfd5
+bc34a46e97c41ce953eacf78278fef3e
   isValidRookMove ::
     ChessBoard.Piece
     -> ChessBoard.Location
@@ -3406,7 +4123,7 @@ efd2894f5ba28bcd962b5734784636d2
 0c37c0626835c59346b41bef0672388e
   isValidRookMove3 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("Invalid rook movement!"#) -}
-7ac353f9777a7dd5f1f566bcaa6b2ee2
+77bbb878e4501e0c26bc791a2a9b8f75
   isValidRookMovement ::
     ChessBoard.Location -> ChessBoard.Location -> GHC.Types.Bool
   {- Arity: 2, HasNoCafRefs,
@@ -3419,16 +4136,16 @@ efd2894f5ba28bcd962b5734784636d2
                  case w1 of ww5 { ChessBoard.Location ww6 ww7 ->
                  case ww7 of ww8 { GHC.Types.I# ww9 ->
                  ChessBoard.$wisValidRookMovement ww1 ww4 ww6 ww9 } } } }) -}
-39c6fc73b8cfd60850b73221e8e41936
+50f9d1f952425353c184bf236b72842a
   location ::
     ChessBoard.ColLoc -> ChessBoard.RowLoc -> ChessBoard.Location
   {- Arity: 2, HasNoCafRefs, Strictness: <L,U><L,U>m,
      Unfolding: InlineRule (0, True, True) ChessBoard.Location -}
-7fb91dbb5336de675596e9347105641a
+09386c93f54b83194750c89cc3b8d45d
   mkDiagLocs ::
     [GHC.Types.Int] -> [GHC.Types.Int] -> [ChessBoard.Location]
   {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U><L,1*U> -}
-b3b1410752664889a962cdb896743a42
+196bddf6b9ca8458da8c29e7159fe109
   movePiece ::
     ChessBoard.Board
     -> ChessBoard.Location -> ChessBoard.Location -> ChessBoard.Board
@@ -3443,7 +4160,7 @@ b3b1410752664889a962cdb896743a42
                  case w2 of ww3 { ChessBoard.Location ww4 ww5 ->
                  case ww5 of ww6 { GHC.Types.I# ww7 ->
                  ChessBoard.$wmovePiece w ww1 ww2 ww4 ww7 } } }) -}
-d6bf4731b011c565064b8deb38b9aa7c
+8e056af4d83966ffb6cca0fdd40d0ace
   name :: ChessBoard.Player -> GHC.Base.String
   RecSel Left ChessBoard.Player
   {- Arity: 1, HasNoCafRefs, Strictness: <S(SLLLL),1*U(1*U,A,A,A,A)>,
@@ -3490,7 +4207,7 @@ f0d0131a6da1fa43ea926a5aebbc8e86
 377d08f0edbd5acb11d087de03caff35
   pieceValue5 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 1#) -}
-d6bf4731b011c565064b8deb38b9aa7c
+8e056af4d83966ffb6cca0fdd40d0ace
   playerColor :: ChessBoard.Player -> ChessBoard.Color
   RecSel Left ChessBoard.Player
   {- Arity: 1, HasNoCafRefs, Strictness: <S(LSLLL),1*U(A,1*U,A,A,A)>,
@@ -3602,7 +4319,7 @@ c6248587e828c5597007c6ed8f3548fb
                            ChessBoard.Rook -> ChessBoard.$fShowChessPiece5
                            ChessBoard.Queen -> ChessBoard.$fShowChessPiece3
                            ChessBoard.King -> ChessBoard.$fShowChessPiece1 }) }) -}
-08ba0797b688a2a53555a27b4d8fb35b
+8acdce663679723ef823bb289e107124
   printPlayerScore :: ChessBoard.Player -> GHC.Base.String
   {- Arity: 1, Strictness: <S,1*U(1*U,1*U,A,A,1*U(U))>, Inline: [2],
      Unfolding: InlineRule (1, True, False)
@@ -3627,7 +4344,7 @@ f9d827f0f76c2d83086dfd701806afe6
                  case w of ww { GHC.Types.I# ww1 ->
                  case ChessBoard.$wprintRow ww1 w1 of ww2 { (#,#) ww3 ww4 ->
                  GHC.Types.: @ GHC.Types.Char ww3 ww4 } }) -}
-199a4fdf3ee210441288dcac72c676cd
+d8d78ae752dbb7393e44d15251232672
   printScore :: ChessBoard.Game -> GHC.Base.String
   {- Arity: 1,
      Strictness: <S(LSL),1*U(A,1*U(1*U,1*U,A,A,1*U(U)),1*U(1*U,1*U,A,A,1*U(U)))>,
@@ -3640,7 +4357,7 @@ f9d827f0f76c2d83086dfd701806afe6
 66c97400b77b3b20c5afbb463e148830
   printScore1 :: GHC.Prim.Addr#
   {- HasNoCafRefs, Unfolding: ("\n"#) -}
-6d385c50f3e77ecbf04884f8546afb85
+c991e6f3905ca0d451262342f1e59d59
   promotePawn ::
     ChessBoard.Game
     -> ChessBoard.Location -> ChessBoard.ChessPiece -> ChessBoard.Game
@@ -3673,7 +4390,7 @@ f9d827f0f76c2d83086dfd701806afe6
                       ww8 })
                    ww2
                    ww3 } }) -}
-f357400f0d1cf35132b8e7f3e4a43eb5
+58632cbaee052ba9bf28f20b874e61bd
   promotePawnBoard ::
     ChessBoard.Board
     -> ChessBoard.Location
@@ -3756,7 +4473,7 @@ d1d901e863ff4c214f13546a401fab69
 63578eb5be6cb2b7a1b2ddeaa3701ae5
   rowSep1 :: [GHC.Types.Char]
   {- Unfolding: (ChessBoard.$wxs3 8#) -}
-d6bf4731b011c565064b8deb38b9aa7c
+8e056af4d83966ffb6cca0fdd40d0ace
   score :: ChessBoard.Player -> GHC.Types.Int
   RecSel Left ChessBoard.Player
   {- Arity: 1, HasNoCafRefs,
@@ -3865,7 +4582,7 @@ b2dc05d72afbbdf4eb79734b62070656
                  GHC.Maybe.Just
                    @ ChessBoard.Piece
                    (ChessBoard.Piece ChessBoard.Black x2)) -}
-c4449e73580eb1b0ec395d841541f666
+5bd60f4dc1e666c76efa0f49dc869fc4
   swapLoc :: ChessBoard.Location -> ChessBoard.Location
   {- Arity: 1, HasNoCafRefs, Strictness: <S,1*U(U,U)>m,
      Unfolding: InlineRule (1, True, False)
@@ -3880,7 +4597,7 @@ c4449e73580eb1b0ec395d841541f666
                  case ds of wild { GHC.Types.I# ds1 ->
                  case ds1 of ds2 {
                    DEFAULT -> ChessBoard.Black 1# -> ChessBoard.White } }) -}
-2cb1606a534500623a7d02d1c6337d1d
+a2c5b2e585a4df6e666a17965ca96ea7
   updateActive ::
     ChessBoard.Player -> ChessBoard.ChessPiece -> ChessBoard.Player
   {- Arity: 2, Strictness: <S,1*U(U,U,U,U,U)><L,U>m, Inline: [2],
@@ -3895,7 +4612,7 @@ c4449e73580eb1b0ec395d841541f666
                         ww5
                         w1 of ww6 { (#,,,,#) ww7 ww8 ww9 ww10 ww11 ->
                  ChessBoard.Player ww7 ww8 ww9 ww10 ww11 } }) -}
-b36b75c736d123136000fdbd69c33074
+78839e84f1cc7fcc65c01d3dbfad07d4
   updateBoard ::
     ChessBoard.Board
     -> ChessBoard.Location
@@ -3917,7 +4634,7 @@ b36b75c736d123136000fdbd69c33074
                         ww4
                         ww6 of ww7 { (#,#) ww8 ww9 ->
                  (ww8, ww9) } } } }) -}
-6baed9317a6701e7fea34808f6dd6bcb
+75af6457d224d9ca63d6397f24e80093
   updateCaptured ::
     ChessBoard.Player -> ChessBoard.ChessPiece -> ChessBoard.Player
   {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U(U,U,U,U,U)><L,U>m,
@@ -3930,7 +4647,7 @@ b36b75c736d123136000fdbd69c33074
                    (GHC.Types.: @ ChessBoard.ChessPiece cp ds2)
                    ds3
                    ds4 }) -}
-a7e52fdd3c1f092921b43c3d170045bb
+5ae8de6b28f7b817024b53ae02c29039
   updateGameBoard ::
     ChessBoard.Game -> ChessBoard.Board -> ChessBoard.Game
   {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U(A,U,U)><L,U>m,
@@ -3938,7 +4655,7 @@ a7e52fdd3c1f092921b43c3d170045bb
                 (\ (g :: ChessBoard.Game) (b :: ChessBoard.Board) ->
                  case g of wild { ChessBoard.Game ds ds1 ds2 ->
                  ChessBoard.Game b ds1 ds2 }) -}
-9d0f1464aa166a0706a3513c4978aa00
+c9527da6d325218f76284ec8120c4271
   updateGamePlayers ::
     ChessBoard.Game
     -> ChessBoard.Player -> ChessBoard.Player -> ChessBoard.Game
@@ -3949,7 +4666,7 @@ a7e52fdd3c1f092921b43c3d170045bb
                    (p2 :: ChessBoard.Player) ->
                  case g of wild { ChessBoard.Game ds ds1 ds2 ->
                  ChessBoard.Game ds p1 p2 }) -}
-74bd4c51f5abac071d3d119dfa451e01
+dcf32fd922c0fdd9f4c7d918337d20eb
   updatePlayerName ::
     ChessBoard.Player -> GHC.Base.String -> ChessBoard.Player
   {- Arity: 2, HasNoCafRefs, Strictness: <S,1*U(A,U,U,U,U)><L,U>m,
@@ -3957,7 +4674,7 @@ a7e52fdd3c1f092921b43c3d170045bb
                 (\ (p :: ChessBoard.Player) (newname :: GHC.Base.String) ->
                  case p of wild { ChessBoard.Player ds ds1 ds2 ds3 ds4 ->
                  ChessBoard.Player newname ds1 ds2 ds3 ds4 }) -}
-103630999c5be7fadfd8e51291656518
+cb1351e0219826279df467a8d725406a
   updateScore ::
     ChessBoard.Player -> GHC.Types.Int -> ChessBoard.Player
   {- Arity: 2, HasNoCafRefs,
@@ -3971,7 +4688,7 @@ a7e52fdd3c1f092921b43c3d170045bb
                    ds2
                    ds3
                    (GHC.Num.$fNumInt_$c+ ds4 int) }) -}
-5133774df47c442ceeb2e6937e090433
+29bcc25a12157d2e6701f2fd2a546792
   whitePlayer :: ChessBoard.Player
   {- Strictness: m,
      Unfolding: (ChessBoard.Player
@@ -3993,12 +4710,16 @@ instance [safe] GHC.Classes.Eq [ChessBoard.Color]
   = ChessBoard.$fEqColor
 instance [safe] GHC.Classes.Eq [ChessBoard.Direction]
   = ChessBoard.$fEqDirection
+instance [safe] GHC.Classes.Eq [ChessBoard.GameOver]
+  = ChessBoard.$fEqGameOver
 instance [safe] GHC.Classes.Eq [ChessBoard.Piece]
   = ChessBoard.$fEqPiece
 instance [safe] GHC.Show.Show [ChessBoard.ChessPiece]
   = ChessBoard.$fShowChessPiece
 instance [safe] GHC.Show.Show [ChessBoard.Color]
   = ChessBoard.$fShowColor
+instance [safe] GHC.Show.Show [ChessBoard.GameOver]
+  = ChessBoard.$fShowGameOver
 instance [safe] GHC.Show.Show [ChessBoard.Location]
   = ChessBoard.$fShowLocation
 instance [safe] GHC.Show.Show [ChessBoard.Piece]

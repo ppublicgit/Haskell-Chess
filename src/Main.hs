@@ -2,7 +2,7 @@ module Main where
 
 import System.Exit(exitSuccess)
 import Data.Char(toUpper, ord)
-import System.IO
+import System.IO(hSetBuffering, stdout, BufferMode(NoBuffering))
 import Data.List(elem)
 import Data.Maybe(fromJust)
 
@@ -37,14 +37,13 @@ askPlayerMove name1 name2 turn = do
         putStrLn $ "Your move " <> name2 <> ". You are playing as Black."
 
 checkMoveInput :: String -> Bool
-checkMoveInput move = not . moveInputLimits . makeInputLocation $ (ord . toUpper) <$> [move !! 0, move !! 1]
+checkMoveInput move = not . checkMoveInputLimits . makeInputLocation $ (ord . toUpper) <$> [move !! 0, move !! 1]
     where makeInputLocation loc = Location (loc !! 0) (loc !! 1)
           checkMoveInputLimits (Location col row) = col < 65 || col > 72 || row < 49 || row > 56
 
 checkPlayerMove :: String -> Bool
 checkPlayerMove inputs
-    | length inputs /= 5 = False
-    | inputs !! 2 /= ' ' = False
+    | length inputs /= 5 || inputs !! 2 /= ' ' = False
     | otherwise = (checkMoveInput $ take 2 inputs) && (checkMoveInput $ reverse . take 2 $ reverse inputs)
 
 extractSingleMove :: String -> Location
@@ -136,5 +135,5 @@ main = do
     player2name <- getLine
     let player2 = updatePlayerName blackPlayer player2name
     let newGame = updateGamePlayers game player1 player2
-    putStrLn $ "When it is your turn, specify moves by two characters of column row for start, and then two characters for column and row as end. Example: A2 C5"
+    putStrLn $ "When it is your turn, specify moves by two characters for start column row, and then two characters for end column row. Example: A2 C5"
     runGame newGame 1 0 ""

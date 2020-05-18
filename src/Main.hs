@@ -8,17 +8,10 @@ import Data.Maybe(fromJust)
 
 import ChessBoard
 
-checkCapturedKing :: Game -> Int -> Bool
-checkCapturedKing (Game _ (Player _ _ _ act1 _) (Player _ _ _ act2 _)) playerTurn
-    | playerTurn == 1 = not $ elem King act1
-    | playerTurn == 2 = not $ elem King act2
-    | otherwise = False
-
 congratsString :: Game -> Int -> String
 congratsString (Game _ (Player name1 _ _ _ _) (Player name2 _ _ _ _)) playerTurn
     | playerTurn == 1 = "Congrats " <> name2 <> ". You have beaten " <> name1 <> " in your game of chess!"
-    | playerTurn == 2 = "Congrats " <> name1 <> ". You have beaten " <> name2 <> " in your game of chess!"
-    | otherwise = "Neither player wins. What is happening?"
+    | otherwise = "Congrats " <> name1 <> ". You have beaten " <> name2 <> " in your game of chess!"
 
 stalelmateString :: Game -> String
 stalelmateString (Game _ (Player name1 _ _ _ _) (Player name2 _ _ _ _)) = "Boo, you have reached a stalemate. Enjoy your tie " <> name1 <> " and " <> name2 <> "."
@@ -44,10 +37,9 @@ askPlayerMove name1 name2 turn = do
         putStrLn $ "Your move " <> name2 <> ". You are playing as Black."
 
 checkMoveInput :: String -> Bool
-checkMoveInput move
-    | ((ord . toUpper $ move !! 1) < 49 ) || ((ord . toUpper $ move !! 1) > 56) = False
-    | ((ord . toUpper $ move !! 0) < 65 ) || ((ord . toUpper $ move !! 0) > 72) = False
-    | otherwise = True
+checkMoveInput move = not . moveInputLimits . makeInputLocation $ (ord . toUpper) <$> [move !! 0, move !! 1]
+    where makeInputLocation loc = Location (loc !! 0) (loc !! 1)
+          checkMoveInputLimits (Location col row) = col < 65 || col > 72 || row < 49 || row > 56
 
 checkPlayerMove :: String -> Bool
 checkPlayerMove inputs
